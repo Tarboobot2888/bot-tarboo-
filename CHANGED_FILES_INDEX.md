@@ -8,8 +8,8 @@
 | الحالة | العدد |
 |---|---|
 | جديد | 18 |
-| معدّل | 46 |
-| **الإجمالي** | **64** |
+| معدّل | 48 |
+| **الإجمالي** | **66** |
 
 **لم تُغيَّر:** `package.json` · `package-lock.json` (Baileys تبقى `@whiskeysockets/baileys@7.0.0-rc14`) · `index.js` · `src/handler.js` · أي بلوقن خارج فئة الألعاب.
 
@@ -17,6 +17,7 @@
 
 | الحالة | المسار | ما تغيّر |
 |---|---|---|
+| معدّل | `.gitignore` | — |
 | جديد | `CHANGED_FILES_INDEX.md` | توثيق |
 | جديد | `TERBOO_MINIAPP_FINAL_REPORT.md` | توثيق |
 | جديد | `TERBOO_MINIAPP_ROLLBACK.md` | توثيق |
@@ -64,6 +65,7 @@
 | معدّل | `src/lib/terboo-game-ulartangga.js` | حُذف مولّد صورة اللوحة على canvas وPLAYER_IMAGES وDICE_STICKERS؛ بقيت الطوبولوجيا |
 | معدّل | `src/lib/terboo-games.js` | 429⇒78 سطراً: حُذف محرك الجلسات القديم وsendQuizCard وinlineQuizImage. صار سجلاً فقط، ويسجّل العقد الموحّد عند register() |
 | معدّل | `src/lib/terboo-html-game.js` | مدقّق بنيوي بدل regex (أصلح سقوط كل بطاقات الألعاب) · حذف inlineImageDataUrl و<img> · نقل HTML مطفأ افتراضياً |
+| معدّل | `src/lib/terboo-secrets.js` | — |
 | معدّل | `src/lib/terboo-visual-response.js` | حارس: بطاقة لعبة لا تحمل صورة (رفض + تجريد). الصور غير المرتبطة بالألعاب كما هي |
 | معدّل | `tests/terboo-arcade-ai.test.mjs` | نية «العب خمن العلم» تحل إلى عقد قابل للعب |
 | معدّل | `tests/terboo-arcade-html.test.mjs` | إصلاح إنذار كاذب في regex + قلب تأكيدات سياسة الصور + الافتراضي off |
