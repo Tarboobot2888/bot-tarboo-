@@ -247,3 +247,24 @@ plugins/ai/تخيل3.js:21-22
 3. **14 اختباراً فاشلاً** سابقاً وخارج النطاق (§6).
 4. **HTML المضمَّن** مطفأ لعدم ثبوت التصيير — متاح للقياس على جهاز حقيقي.
 5. **وكيل الأصول** بقائمة مضيفات مغلقة: إضافة مصدر أسئلة جديد تتطلب إضافة مضيفه في `assets.js`.
+
+## ملاحظة التسليم: النسخة الكاملة مقسّمة
+
+حد رفع الملفات 30 ميغابايت والنسخة الكاملة ~34، فقُسّمت كما قُسّم الإدخال:
+
+| الملف | المحتوى | الحجم |
+|---|---|---|
+| `Bot-Terboo-V6-MiniApps-Full-Part1.zip` | الوسائط: `assets/` + `tools/brand-art/` | 27.7 MiB |
+| `Bot-Terboo-V6-MiniApps-Full-Part2.zip` | المشروع كاملاً عدا تلك الوسائط | 6.1 MiB |
+
+الأجزاء لا تتقاطع في أي مسار. الدمج:
+
+```bash
+mkdir -p merged && cd merged
+unzip -o ../Bot-Terboo-V6-MiniApps-Full-Part1.zip
+unzip -o ../Bot-Terboo-V6-MiniApps-Full-Part2.zip
+cd Bot-Terboo-V6-Arcade-Web && cp config.example.js config.js && npm ci && npm start
+```
+
+تم التحقق: الدمج يعطي **1842 ملفاً** مطابقة للنسخة الكاملة، ويجتاز اختبار سياسة الصور.
+
