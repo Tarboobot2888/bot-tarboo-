@@ -8,8 +8,8 @@
 | الحالة | العدد |
 |---|---|
 | جديد | 18 |
-| معدّل | 45 |
-| **الإجمالي** | **63** |
+| معدّل | 46 |
+| **الإجمالي** | **64** |
 
 **لم تُغيَّر:** `package.json` · `package-lock.json` (Baileys تبقى `@whiskeysockets/baileys@7.0.0-rc14`) · `index.js` · `src/handler.js` · أي بلوقن خارج فئة الألعاب.
 
@@ -26,6 +26,7 @@
 | جديد | `docs/TERBOO_MINIAPP_MIGRATION.md` | توثيق |
 | جديد | `docs/TERBOO_MINIAPP_SECURITY.md` | توثيق |
 | جديد | `docs/TERBOO_MINIAPP_TEST_REPORT.md` | توثيق |
+| معدّل | `docs/arcade/performance.json` | توثيق |
 | معدّل | `docs/terboo-visual-matrix.json` | مُعاد توليده (htmlEligible: 45) |
 | معدّل | `plugins/ai/تخيل3.js` | — |
 | معدّل | `plugins/game/أسئلة_ذكاء.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
