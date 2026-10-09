@@ -1,0 +1,97 @@
+#!/usr/bin/env node
+// ═══════════════════════════════════════════════
+// 🧩 config.example.js — قالب إعدادات بلا أسرار من config.js نفسه
+// ───────────────────────────────────────────────
+//   node tools/terboo-config-example.mjs
+// نفس البنية والتعليقات والقيم العامة؛ تُفرَّغ: مفاتيح APIkey · مفاتيح/كلمات مرور Virtualizor ومضيفه وعناوينه
+// · أرقام المالك والجلسة · البريد ورابط واتساب الشخصي · أي token/apikey/capikey/masterKey/encryptionKey.
+// ثم تحقق: لا قيمة سرية حقيقية من config.js المحمّل تظهر في الناتج (وإلا يفشل ولا يكتب).
+// لا يطبع أي قيمة سرية.
+// ═══════════════════════════════════════════════
+
+import fs from "node:fs";
+import path from "node:path";
+import { execFileSync } from "node:child_process";
+
+const ROOT = process.cwd();
+const source = fs.readFileSync(path.join(ROOT, "config.js"), "utf8");
+const config = (await import(path.join(ROOT, "config.js"))).default;
+
+/** يفرّغ قيمة نصية لمفتاح داخل سطر: key: "…" ⇒ key: "<بديل>" */
+function blankKey(text, key, replacement = "") {
+  const re = new RegExp(`(\\b${key}\\s*:\\s*)(["'\`])(?:(?!\\2).)*\\2`, "g");
+  return text.replace(re, (_, head, quote) => `${head}${quote}${replacement}${quote}`);
+}
+
+/** يفرّغ كل القيم النصية داخل كتلة كائن تبدأ بـ «name: {» حتى قوسها المغلق */
+function blankBlock(text, name) {
+  const start = text.search(new RegExp(`\\n\\s*${name}\\s*:\\s*\\{`));
+  if (start === -1) return text;
+  let depth = 0;
+  let end = start;
+  for (let i = text.indexOf("{", start); i < text.length; i += 1) {
+    if (text[i] === "{") depth += 1;
+    if (text[i] === "}" && --depth === 0) { end = i; break; }
+  }
+  // القيمة المباشرة (key: "…") والقيمة الاحتياطية بعد متغير البيئة (key: process.env.X || "…")
+  const block = text.slice(start, end).replace(/((?::|\|\|)\s*)(["'`])(?:(?!\2).)*\2/g, (_, head, quote) => `${head}${quote}${quote}`);
+  return text.slice(0, start) + block + text.slice(end);
+}
+
+let out = source;
+out = blankBlock(out, "APIkey");
+out = blankBlock(out, "webSessions");
+for (const key of ["apiKey", "apiPassword", "apikey", "capikey", "token", "masterKey", "encryptionKey", "geminiApiKey"]) out = blankKey(out, key);
+out = blankKey(out, "pairingNumber");
+out = blankKey(out, "gmail");
+out = blankKey(out, "whatsapp");
+// أرقام المالك ⇒ مثال واضح غير حقيقي
+out = out.replace(/(\bnumber\s*:\s*\[)[^\]]*(\])/, `$1"20XXXXXXXXXX"$2`);
+// مضيف Virtualizor وعناوينه ⇒ أمثلة توثيقية
+out = out.replace(/(virtualizor\s*:\s*\{[\s\S]*?enduser\s*:\s*\{[\s\S]*?\burl\s*:\s*)(["'`])(?:(?!\2).)*\2/, `$1$2https://vps.example.com:4083$2`);
+out = out.replace(/(virtualizor\s*:\s*\{[\s\S]*?admin\s*:\s*\{[\s\S]*?\burl\s*:\s*)(["'`])(?:(?!\2).)*\2/, `$1$2$2`);
+// عناوين مضيف حقيقية ⇒ تُحذف؛ «*» (بلا تقييد) قيمة عامة تبقى
+out = out.replace(/(\bipAddresses\s*:\s*\[)([^\]]*)(\])/g, (_, open, list, close) => `${open}${list.split(",").map((x) => x.trim()).filter((x) => /^["'`]\*["'`]$/.test(x)).join(", ")}${close}`);
+
+const header = [
+  "// ═══════════════════════════════════════════════",
+  "// 🧩 config.example.js — قالب بلا أسرار (مولَّد بـ tools/terboo-config-example.mjs)",
+  "// انسخه إلى config.js ثم ضع أرقامك ومفاتيحك. لا ترفع config.js الحقيقي إلى مستودع عام أبداً.",
+  "// ═══════════════════════════════════════════════",
+  "",
+].join("\n");
+out = header + out;
+
+// ── التحقق: لا سر حقيقي في الناتج ──
+const secrets = [];
+const push = (name, value) => { if (typeof value === "string" && value.trim().length >= 6) secrets.push([name, value.trim()]); };
+for (const [name, value] of Object.entries(config.APIkey || {})) push(`APIkey.${name}`, value);
+for (const [layerName, layer] of [["enduser", config.virtualizor?.enduser], ["admin", config.virtualizor?.admin]]) {
+  if (!layer) continue;
+  push(`virtualizor.${layerName}.apiKey`, layer.apiKey);
+  push(`virtualizor.${layerName}.apiPassword`, layer.apiPassword);
+  push(`virtualizor.${layerName}.url`, layer.url);
+  for (const ip of layer.ipAddresses || []) if (ip !== "*") push(`virtualizor.${layerName}.ipAddresses`, ip);
+}
+push("virtualizor.security.encryptionKey", config.virtualizor?.security?.encryptionKey);
+push("security.masterKey", config.security?.masterKey);
+push("geminiApiKey", config.geminiApiKey);
+for (const [name, value] of Object.entries(config.webSessions || {})) push(`webSessions.${name}`, value);
+push("telegram.vps.token", config.telegram?.vps?.token);
+push("digitalocean.token", config.digitalocean?.token);
+for (const [name, server] of Object.entries(config.pterodactyl || {})) if (server && typeof server === "object") { push(`pterodactyl.${name}.apikey`, server.apikey); push(`pterodactyl.${name}.capikey`, server.capikey); }
+for (const number of config.owner?.number || []) push("owner.number", String(number));
+push("session.pairingNumber", config.session?.pairingNumber);
+push("socialLinks.gmail", config.socialLinks?.gmail);
+// أسماء المفاتيح فقط عند التسرّب — القيم لا تُطبع
+const leaked = secrets.filter(([, value]) => out.includes(value)).map(([name]) => name);
+if (leaked.length) {
+  console.error(`❌ قيم سرية ما زالت في القالب — لم يُكتب شيء: ${leaked.join(", ")}`);
+  process.exit(1);
+}
+
+const file = path.join(ROOT, "config.example.js");
+fs.writeFileSync(file, out);
+execFileSync(process.execPath, ["--check", file], { stdio: "ignore" });
+console.log(`✅ config.example.js: ${secrets.length} قيمة حساسة فُحصت · 0 تسرّب · صياغة سليمة`);
+process.exit(0);

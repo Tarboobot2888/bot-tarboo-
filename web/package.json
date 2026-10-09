@@ -1,0 +1,13 @@
+{
+  "name": "bot-terboo-web",
+  "version": "6.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bot Terboo V6 companion website — shares the bot's intelligence core, services and database (no separate business logic).",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index.js",
+    "dev": "node index.js"
+  },
+  "engines": { "node": ">=22.0.0" }
+}

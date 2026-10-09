@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-03T18:39:50.920Z",
+  "layer": {
+    "layer": "enduser",
+    "enabled": true,
+    "configured": true,
+    "tls": true,
+    "timeoutMs": 15000
+  },
+  "steps": [
+    {
+      "name": "list VPS (act=listvs)",
+      "ok": false,
+      "ms": 46434,
+      "error": "timeout",
+      "detail": "request-timeout"
+    }
+  ]
+}
