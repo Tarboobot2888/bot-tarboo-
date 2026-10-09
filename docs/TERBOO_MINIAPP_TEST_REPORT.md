@@ -4,7 +4,7 @@
 > `node tools/terboo-run-tests.mjs --json after.json` ثم
 > `node tools/terboo-miniapp-test-report.mjs --after after.json --before baseline.json`
 >
-> أُنشئ في: 2026-10-09T19:25:19.854Z
+> أُنشئ في: 2026-10-09T19:44:09.193Z
 
 ## الحصيلة
 
@@ -26,9 +26,9 @@
 
 | الاختبار | النتيجة | المدة | الملخّص |
 |---|---|---|---|
-| `terboo-game-image-policy.test.mjs` | ✅ نجح | 4.4ث | ✅ terboo-game-image-policy: فحص ثابت (105 ملف · 0 مولّد · 0 حقل صورة) · دورة حياة 45 لعبة بلا صورة · فشل النقل بلا صورة · عقد VisualResponse (ألعاب ممنوعة · غير الألعاب مسموحة) · بنّاء HTML بلا img/data:image |
-| `terboo-miniapp-security.test.mjs` | ✅ نجح | 3.7ث | ✅ terboo-miniapp-security: وكيل الأصول (توقيع · عبث · انتهاء · مضيف مغلق · لا SVG/HTML · 405) · قناة الإجراءات (stale · bad-nonce · expired · 6 حقول قرار · actionId · حمولة ضخمة · رمز غريب · تزامن ⇒ 1) · رمز بلا هوية خام |
-| `terboo-miniapp-ui.test.mjs` | ✅ نجح | 17.0ث | ✅ terboo-miniapp-ui: Chromium حقيقي · صفحة لعب على 320/360/412/480/820px بلا overflow · RTL+LTR · 0 أخطاء console · 0 موارد خارجية · نقرة لمس ⇒ حالة الخادم · حقل قرار مرفوض · أصل بصري same-origin موقّع · كتالوج 45 لعبة ب |
+| `terboo-game-image-policy.test.mjs` | ✅ نجح | 4.3ث | ✅ terboo-game-image-policy: فحص ثابت (105 ملف · 0 مولّد · 0 حقل صورة) · دورة حياة 45 لعبة بلا صورة · فشل النقل بلا صورة · عقد VisualResponse (ألعاب ممنوعة · غير الألعاب مسموحة) · بنّاء HTML بلا img/data:image |
+| `terboo-miniapp-security.test.mjs` | ✅ نجح | 3.9ث | ✅ terboo-miniapp-security: وكيل الأصول (توقيع · عبث · انتهاء · مضيف مغلق · لا SVG/HTML · 405) · قناة الإجراءات (stale · bad-nonce · expired · 6 حقول قرار · actionId · حمولة ضخمة · رمز غريب · تزامن ⇒ 1) · رمز بلا هوية خام |
+| `terboo-miniapp-ui.test.mjs` | ✅ نجح | 16.5ث | ✅ terboo-miniapp-ui: Chromium حقيقي · صفحة لعب على 320/360/412/480/820px بلا overflow · RTL+LTR · 0 أخطاء console · 0 موارد خارجية · نقرة لمس ⇒ حالة الخادم · حقل قرار مرفوض · أصل بصري same-origin موقّع · كتالوج 45 لعبة ب |
 
 
 **ما تثبته فعلاً:**
@@ -47,10 +47,10 @@
 
 | الاختبار | النتيجة | المدة | الملخّص |
 |---|---|---|---|
-| `terboo-arcade-html.test.mjs` | ✅ نجح | 0.5ث | ✅ terboo-arcade-html: هروب · مدقق (11 رفض) · نقل HTML primitive لـ23 لعبة · بلا انتحال · جسر الإجراءات غير مُعلن · قوالب بموافقة المالك · 6 ثيمات · renderers |
-| `terboo-arcade-multiplayer.test.mjs` | ✅ نجح | 67.1ث | ✅ terboo-arcade-multiplayer: XO مجموعة (أزرار+كتابة+nonce+دور+فوز+مكافأة) · تحدي صديق · ضد الكمبيوتر · ثعبان وسلم 4 لاعبين · أسئلة جماعية · اختيار سري في الخاص · كلام طبيعي |
-| `terboo-visual-response.test.mjs` | ✅ نجح | 6.9ث | ✅ terboo-visual-response: 924 أمر · HTML مؤهل 45 (ألعاب فقط، يُسلَّم hybrid) · تحقق يرفض الميت/غير المُدقَّق · تسليم موحّد · المصفوفة حديثة |
-| `terboo-web-arcade.test.mjs` | ✅ نجح | 4.2ث | ✅ terboo-web-arcade: رمز موقّع · API (قبول/قديم/محظور/منتهٍ/منشأ/JSON) · صفحة اللعب + CSP · كتالوج 45 · رابط تلقائي/مالك · زر الخاص + رابط شخصي للمجموعة · .موقع (منفذ/رابط/SSL + HTTPS فعلي) |
+| `terboo-arcade-html.test.mjs` | ✅ نجح | 0.6ث | ✅ terboo-arcade-html: هروب · مدقق (11 رفض) · نقل HTML primitive لـ23 لعبة · بلا انتحال · جسر الإجراءات غير مُعلن · قوالب بموافقة المالك · 6 ثيمات · renderers |
+| `terboo-arcade-multiplayer.test.mjs` | ✅ نجح | 6.5ث | ✅ terboo-arcade-multiplayer: XO مجموعة (أزرار+كتابة+nonce+دور+فوز+مكافأة) · تحدي صديق · ضد الكمبيوتر · ثعبان وسلم 4 لاعبين · أسئلة جماعية · اختيار سري في الخاص · كلام طبيعي |
+| `terboo-visual-response.test.mjs` | ✅ نجح | 7.1ث | ✅ terboo-visual-response: 924 أمر · HTML مؤهل 45 (ألعاب فقط، يُسلَّم hybrid) · تحقق يرفض الميت/غير المُدقَّق · تسليم موحّد · المصفوفة حديثة |
+| `terboo-web-arcade.test.mjs` | ✅ نجح | 3.8ث | ✅ terboo-web-arcade: رمز موقّع · API (قبول/قديم/محظور/منتهٍ/منشأ/JSON) · صفحة اللعب + CSP · كتالوج 45 · رابط تلقائي/مالك · زر الخاص + رابط شخصي للمجموعة · .موقع (منفذ/رابط/SSL + HTTPS فعلي) |
 
 
 ---
@@ -84,20 +84,20 @@
 
 | الاختبار | النتيجة | المدة | الملخّص |
 |---|---|---|---|
-| `terboo-ai-core-v4.test.mjs` | ❌ فشل | 3.8ث | — |
-| `terboo-ai-matrix.test.mjs` | ❌ فشل | 3.8ث | — |
+| `terboo-ai-core-v4.test.mjs` | ❌ فشل | 3.6ث | — |
+| `terboo-ai-matrix.test.mjs` | ❌ فشل | 3.6ث | — |
 | `terboo-baileys-migration.test.mjs` | ❌ فشل | 1.0ث | — |
 | `terboo-brand-lock.test.mjs` | ❌ فشل | 0.6ث | — |
-| `terboo-channel-forward.test.mjs` | ❌ فشل | 0.6ث | — |
-| `terboo-code-card.test.mjs` | ❌ فشل | 1.1ث | — |
-| `terboo-design.test.mjs` | ❌ فشل | 10.1ث | — |
-| `terboo-group-ai-reports.test.mjs` | ❌ فشل | 3.3ث | — |
-| `terboo-i18n-runtime.test.mjs` | ❌ فشل | 3.0ث | — |
-| `terboo-integrity.test.mjs` | ❌ فشل | 3.6ث | — |
-| `terboo-menus.test.mjs` | ❌ فشل | 3.5ث | — |
-| `terboo-scraper-ai-e2e.test.mjs` | ❌ فشل | 4.0ث | — |
+| `terboo-channel-forward.test.mjs` | ❌ فشل | 0.7ث | — |
+| `terboo-code-card.test.mjs` | ❌ فشل | 1.0ث | — |
+| `terboo-design.test.mjs` | ❌ فشل | 9.6ث | — |
+| `terboo-group-ai-reports.test.mjs` | ❌ فشل | 3.5ث | — |
+| `terboo-i18n-runtime.test.mjs` | ❌ فشل | 2.7ث | — |
+| `terboo-integrity.test.mjs` | ❌ فشل | 3.2ث | — |
+| `terboo-menus.test.mjs` | ❌ فشل | 3.8ث | — |
+| `terboo-scraper-ai-e2e.test.mjs` | ❌ فشل | 4.1ث | — |
 | `terboo-secrets-vault.test.mjs` | ❌ فشل | 0.5ث | — |
-| `terboo-typography.test.mjs` | ❌ فشل | 0.8ث | — |
+| `terboo-typography.test.mjs` | ❌ فشل | 0.7ث | — |
 
 
 ---
