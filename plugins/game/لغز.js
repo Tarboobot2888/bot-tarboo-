@@ -1,9 +1,13 @@
 import { games } from '../../src/lib/terboo-games.js'
 
+import { loadArcade } from '../../src/lib/terboo-arcade/index.js'
+import { quickCommand } from '../../src/lib/terboo-arcade/commands.js'
 const pluginConfig = {
     name: 'لغز',
     alias: ['riddle'],
     category: 'game',
+    // لعبة TERBOO ARCADE المرتبطة (السجل الموحّد): نفس الأمر، Mini App تفاعلية
+    game: 'q_riddle',
     description: 'ألغاز وتخمينات',
     usage: '.لغز',
     example: '.لغز',
@@ -24,6 +28,9 @@ games.register('لغز', {
     dataFile: 'riddle.json'
 })
 
-const { handler, answerHandler } = games.createPlugin('لغز')
+await loadArcade()
 
-export { pluginConfig as config, handler, answerHandler }
+// الحركات المكتوبة يلتقطها answerHandler الموحّد في plugins/game/اركيد.js
+const handler = quickCommand('q_riddle')
+
+export { pluginConfig as config, handler }

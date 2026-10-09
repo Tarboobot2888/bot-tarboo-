@@ -1,9 +1,13 @@
 import { games } from '../../src/lib/terboo-games.js'
 
+import { loadArcade } from '../../src/lib/terboo-arcade/index.js'
+import { quickCommand } from '../../src/lib/terboo-arcade/commands.js'
 const pluginConfig = {
     name: 'كلمة_عشوائية',
     alias: ['kataacak'],
     category: 'game',
+    // لعبة TERBOO ARCADE المرتبطة (السجل الموحّد): نفس الأمر، Mini App تفاعلية
+    game: 'q_kataacak',
     description: 'رتب الحروف العشوائية',
     usage: '.كلمة_عشوائية',
     example: '.كلمة_عشوائية',
@@ -23,6 +27,9 @@ games.register('كلمة_عشوائية', {
     description: 'رتب الحروف العشوائية'
 })
 
-const { handler, answerHandler } = games.createPlugin('كلمة_عشوائية')
+await loadArcade()
 
-export { pluginConfig as config, handler, answerHandler }
+// الحركات المكتوبة يلتقطها answerHandler الموحّد في plugins/game/اركيد.js
+const handler = quickCommand('q_kataacak')
+
+export { pluginConfig as config, handler }

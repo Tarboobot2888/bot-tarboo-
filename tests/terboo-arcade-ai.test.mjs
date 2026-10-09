@@ -149,7 +149,9 @@ const cases = [
   ["let's play reversi vs ai", { intent: "play", gameId: "reversi", vsAI: true }],
   ["quiero jugar ahorcado", { intent: "play", gameId: "hangman" }],
   ["العب ثعبان وسلم", { intent: "play", gameId: "snakes" }],
-  ["العب خمن العلم", { intent: "play", gameId: "خمن_العلم" }],
+  // بعد الترحيل: ألعاب الأسئلة القديمة عقود أركيد (q_*). المعرّف القديم كان
+  // يفشل في createRoom («unknown-game») لأنه عقد legacy؛ الآن يحل إلى لعبة قابلة للعب.
+  ["العب خمن العلم", { intent: "play", gameId: "q_tebakbendera" }],
   ["هات الترتيب", { intent: "leaderboard" }],
   ["الالعاب", { intent: "menu" }],
 ];

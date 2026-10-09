@@ -59,7 +59,17 @@ for (const [name, sample] of Object.entries(bad)) assert.equal(H.validateTemplat
 assert.equal(H.ACTION_BRIDGE.enabled, false, "لا يُعلن جسر HTML بلا إثبات");
 const priorHtmlTransport = process.env.TERBOO_ARCADE_HTML;
 delete process.env.TERBOO_ARCADE_HTML;
-assert.equal(H.resolveHtmlTransport("off"), "rich", "الإعداد القديم off لا يعطّل الترحيل تلقائياً");
+// نقل HTML المضمَّن مطفأ افتراضياً: الترميز مُثبت (round-trip أدناه) لكن تصيير
+// WhatsApp Android له غير مُثبت، ولا قناة تُعيد نقرة منه إلى الخادم.
+// تجربة اللعب التفاعلية هي Mini App الويب على /play/<token>.
+assert.equal(H.resolveHtmlTransport(null), "off", "مطفأ افتراضياً (لا يُفترض تصيير غير مُثبت)");
+assert.equal(H.resolveHtmlTransport("off"), "off", "الإيقاف من الإعداد محترم");
+assert.equal(H.resolveHtmlTransport("rich"), "rich", "التفعيل الصريح من الإعداد يعمل");
+process.env.TERBOO_ARCADE_HTML = "rich";
+assert.equal(H.resolveHtmlTransport(null), "rich", "التفعيل الصريح من البيئة يعمل");
+process.env.TERBOO_ARCADE_HTML = "off";
+assert.equal(H.resolveHtmlTransport("rich"), "off", "البيئة تتغلب على الإعداد");
+delete process.env.TERBOO_ARCADE_HTML;
 if (priorHtmlTransport !== undefined) process.env.TERBOO_ARCADE_HTML = priorHtmlTransport;
 const relayed = await H.relayTransport({ relayMessage: async () => "X" }, "x@s.whatsapp.net", { ok: true, message: {} });
 assert.deepEqual(relayed, { relayed: false, reason: "client-rendering-unproven" }, "النقل لا يعمل دون تفعيل صريح");
@@ -142,10 +152,20 @@ assert.equal(H.validateTemplate(catalog).ok, true, "كتالوج HTML ثلاثي
 const legacyCard = H.buildTextGameHtml({ gameId: "legacy-test", title: "عنوان <خبيث>", body: "حالة الاختبار", text: "*نتيجة*\nقيمة: 100", lang: "ar", theme: "FANTASY" });
 assert.equal(H.validateTemplate(legacyCard).ok, true, "قوالب الألعاب القديمة آمنة");
 assert.doesNotMatch(legacyCard, /<خبيث>/, "نصوص الألعاب القديمة تُهرّب قبل العرض");
+// سياسة الصور الجديدة (§6): بطاقة اللعبة لا تحمل صورة إطلاقاً — لا رسالة صورة،
+// ولا Base64 مضمَّن كبديل عنها. الأصل البصري لألعاب «خمن الصورة» يُعرض داخل
+// صفحة Mini App عبر رمز موقّع same-origin (/api/v1/arcade/asset/<ref>).
 const imageQuizCard = H.buildTextGameHtml({ gameId: "quiz-image", title: "خمن الصورة", text: "ما هذا؟", imageDataUrl: "data:image/jpeg;base64,aGVsbG8=" });
-assert.match(imageQuizCard, /ta-asset-image/, "صورة السؤال تُعرض داخل بطاقة HTML");
-assert.match(imageQuizCard, /data:image\/jpeg;base64,aGVsbG8=/, "لا تحتاج صورة السؤال إلى رسالة صورة منفصلة عند دعم HTML");
-assert.equal(H.validateTemplate(imageQuizCard).ok, true, "صورة JPEG المضمنة آمنة وصالحة");
+assert.doesNotMatch(imageQuizCard, /ta-asset-image|<img\b/i, "لا عنصر صورة في بطاقة اللعبة");
+assert.doesNotMatch(imageQuizCard, /data:image\//i, "لا Base64 لصورة داخل بطاقة اللعبة");
+assert.equal(H.validateTemplate(imageQuizCard).ok, true, "البطاقة بلا صورة تمر من المدقق");
+// الحقل القديم أُلغي: تمريره لا يُعيد مسار الصور من الباب الخلفي
+for (const c of arcadeContracts().slice(0, 8)) {
+  const card = H.buildGameHtml({ gameId: c.id, icon: c.icon, title: c.name.ar, state: "PLAYING", turn: 0,
+    players: [{ name: "A" }], board: { kind: "grid", cols: 2, cells: [{ t: "❌" }, { t: "⭕" }] },
+    inlineImageDataUrl: "data:image/png;base64,iVBORw0KGgo=" }, { lang: "ar" });
+  assert.doesNotMatch(card, /<img\b|data:image\//i, `${c.id}: لا صورة في بطاقة اللعبة`);
+}
 assert.equal((await H.relayHtmlGame({ relayMessage: async () => "X" }, "x@s.whatsapp.net", legacyCard, { transport: "off" })).reason, "transport-disabled");
 
 console.log(`✅ terboo-arcade-html: هروب · مدقق (${Object.keys(bad).length} رفض) · نقل HTML primitive لـ${transported} لعبة · بلا انتحال · جسر الإجراءات غير مُعلن · قوالب بموافقة المالك · 6 ثيمات · renderers`);

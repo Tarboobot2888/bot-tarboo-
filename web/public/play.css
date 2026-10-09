@@ -287,3 +287,10 @@ button { font: inherit; color: inherit; }
 .toast { box-shadow:0 14px 36px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12); }
 @media (max-width:380px) { .card { padding:12px; box-shadow:0 22px 46px rgba(0,0,0,.5),0 6px 0 rgba(0,0,0,.22),inset 0 1px 0 var(--bevel); } .btn { flex-basis:100%; } }
 @media (prefers-reduced-motion: reduce) { .logo,.cell,.btn,.player,.flip,.aurora i { animation:none!important; transition:none!important; } }
+
+/* ── أصل بصري للسؤال (داخل Mini App فقط، same-origin، رمز موقّع) ──
+   هذه الصورة الوحيدة في النظام. الألعاب لا ترسل أي صورة في رسائل واتساب. */
+.asset { margin: 0 0 14px; padding: 6px; border-radius: 18px; background: linear-gradient(145deg, color-mix(in srgb, var(--acc) 26%, #111), rgba(255,255,255,.04) 45%, rgba(0,0,0,.45)); border: 1px solid color-mix(in srgb, var(--acc2) 38%, var(--line)); box-shadow: 0 7px 0 rgba(0,0,0,.26), 0 16px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.2); }
+.asset img { display: block; width: 100%; max-height: min(46vh, 320px); object-fit: contain; border-radius: 12px; background: #080b14; }
+.asset-fail { display: grid; place-items: center; min-height: 140px; font-size: 42px; opacity: .5; border-radius: 12px; background: #080b14; }
+@media (max-width: 380px) { .asset img { max-height: 40vh; } }

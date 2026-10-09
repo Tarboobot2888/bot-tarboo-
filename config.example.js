@@ -234,7 +234,10 @@ const config = {
   // TERBOO ARCADE: تجربة إرسال بطاقة HTML غنية دون بيانات Meta مصطنعة.
   // عند تجاهل العميل لها يستمر النص وأزرار واتساب الأصلية؛ اضبطها على "off" لتعطيل النقل.
   arcade: {
-    html: { transport: process.env.TERBOO_ARCADE_HTML || "rich" },
+    // نقل HTML داخل رسالة واتساب: "off" (افتراضي) أو "rich".
+    // تصيير هذا العنصر على WhatsApp Android غير مُثبت، فلا يُفعَّل تلقائياً.
+    // تجربة اللعب التفاعلية الحقيقية هي Mini App الويب على /play/<token>.
+    html: { transport: process.env.TERBOO_ARCADE_HTML || "off" },
   },
   website: {
     enabled: process.env.TERBOO_WEB_ENABLED ? process.env.TERBOO_WEB_ENABLED === "1" : false, // تشغيل خادم الموقع داخل عملية البوت

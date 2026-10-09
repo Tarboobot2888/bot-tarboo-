@@ -1,9 +1,13 @@
 import { games } from '../../src/lib/terboo-games.js'
 
+import { loadArcade } from '../../src/lib/terboo-arcade/index.js'
+import { quickCommand } from '../../src/lib/terboo-arcade/commands.js'
 const pluginConfig = {
     name: 'خمن_الأغنية',
     alias: ['tebaklagu'],
     category: 'game',
+    // لعبة TERBOO ARCADE المرتبطة (السجل الموحّد): نفس الأمر، Mini App تفاعلية
+    game: 'q_tebaklagu',
     description: 'خمن عنوان الأغنية',
     usage: '.خمن_الأغنية',
     example: '.خمن_الأغنية',
@@ -24,6 +28,9 @@ games.register('خمن_الأغنية', {
     dataFile: 'tebaklagu.json'
 })
 
-const { handler, answerHandler } = games.createPlugin('خمن_الأغنية')
+await loadArcade()
 
-export { pluginConfig as config, handler, answerHandler }
+// الحركات المكتوبة يلتقطها answerHandler الموحّد في plugins/game/اركيد.js
+const handler = quickCommand('q_tebaklagu')
+
+export { pluginConfig as config, handler }

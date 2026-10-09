@@ -51,8 +51,10 @@ const sign = (body) => crypto.createHmac("sha256", secret()).update(body).digest
 
 /** هل العنوان أصل أسئلة مقبول؟ (HTTPS + مضيف من القائمة المغلقة) */
 function allowedSource(rawUrl) {
-  let url;
-  try { url = new URL(String(rawUrl || "")); } catch { return null; }
+  // URL.canParse بدل try/catch: رفض عنوان غير صالح حالة متوقعة لا إخفاق يُسجَّل
+  const text = String(rawUrl || "");
+  if (!URL.canParse(text)) return null;
+  const url = new URL(text);
   if (url.protocol !== "https:") return null;
   if (!ALLOWED_HOSTS.has(url.hostname.toLowerCase())) return null;
   return url;

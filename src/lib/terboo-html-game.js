@@ -19,13 +19,24 @@ import { cssFor, dirOf, themeFor } from "./terboo-game-design-system.js";
 const MAX_HTML_BYTES = 64 * 1024;
 const TRANSPORT_KIND = "terboo.arcade.view";
 
-/** تفعيل HTML افتراضياً بعد الترحيل؛ الإيقاف الصريح يتم عبر TERBOO_ARCADE_HTML=off. */
+/**
+ * نقل HTML المضمَّن داخل رسالة واتساب: **مطفأ افتراضياً** ويُفتح صراحةً فقط.
+ *
+ * السبب موثّق في docs/TERBOO_MINIAPP_MIGRATION.md §النقل:
+ *   • `richResponseMessage.unifiedResponse.data` يحمل HTML فعلاً ويمر encode/decode
+ *     بلا فقدان على @whiskeysockets/baileys 7.0.0-rc14 (مُثبت باختبار round-trip).
+ *   • لكن نجاح الترميز ≠ تصيير العميل. هذا العنصر ردُّ مساعدٍ من Meta، ولا دليل
+ *     أن حساباً عادياً يجعل WhatsApp Android يصيّره، ولا قناة تُعيد نقرة منه للخادم.
+ *   • لذلك لا يُسلك هذا المسار افتراضياً، ولا يُسمّى «تفاعلياً».
+ *
+ * تجربة اللعب الفعلية هي Mini App الويب على /play/<token> (خادم = مصدر الحقيقة).
+ * من يريد تجربة النقل المضمَّن على جهاز حقيقي يفعّله بـTERBOO_ARCADE_HTML=rich
+ * أو config.arcade.html.transport = "rich"، ويبقى مسار البطاقة والأزرار كما هو.
+ */
 function resolveHtmlTransport(configured = null) {
   const env = String(process.env.TERBOO_ARCADE_HTML || "").trim().toLowerCase();
   if (env === "off" || env === "rich") return env;
-  // "off" كان القيمة الافتراضية في الإصدارات السابقة؛ بعد الترحيل أصبح الوضع الافتراضي rich.
-  // لا نعتمد قيمة off القديمة من config.js كي لا يبقى الترحيل معطّلاً بعد استبدال الملفات.
-  return configured === "rich" ? configured : "rich";
+  return configured === "rich" ? "rich" : "off";
 }
 
 /** حالة جسر الإجراءات: لا يُعلن «يعمل» إلا بإثبات Click → Action ID → Backend → Validate → Mutate → Response */

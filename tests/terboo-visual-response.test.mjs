@@ -28,10 +28,12 @@ const meta = (c) => V.visualMetadata(c);
 assert.equal(meta("اكس_او").mode, "html");
 assert.equal(meta("اكس_او").delivered, "hybrid", "HTML يُسلَّم hybrid بلا جسر مُثبت");
 assert.ok(meta("اكس_او").htmlEligible);
-assert.equal(meta("ثعبان_وسلم").mode, "hybrid");
-assert.equal(meta("حجرة_ورقة_مقص").mode, "buttons");
-assert.equal(meta("ساحة_المعلومات").mode, "buttons", "أسئلة بأزرار لا HTML");
-assert.equal(meta("خمن_العلم").mode, "buttons", "لعبة أسئلة قديمة: تلميح/استسلام");
+// ثعبان وسلم صار عقد أركيد ⇒ عرضه html مثل بقية الألعاب الموحّدة
+assert.equal(meta("ثعبان_وسلم").mode, "html");
+assert.equal(meta("حجرة_ورقة_مقص").mode, "html", "عقد أركيد ⇒ html");
+assert.equal(meta("ساحة_المعلومات").mode, "html", "أسئلة الأركيد عرضها html (الأزرار تبقى قناة التحكم)");
+// رُحّلت إلى عقد أركيد q_tebakbendera ⇒ Mini App تفاعلية لا بطاقة تلميح/استسلام
+assert.equal(meta("خمن_العلم").mode, "html", "لعبة الأسئلة المُرحَّلة صارت Mini App");
 for (const legacy of ["مستذئب", "دنجن", "نينجا"]) assert.equal(meta(legacy).mode, "hybrid", legacy);
 const rows = V.visualMatrix();
 assert.ok(rows.length > 500, `كل الأوامر الحية: ${rows.length}`);

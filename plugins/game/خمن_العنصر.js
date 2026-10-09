@@ -1,9 +1,13 @@
 import { games } from '../../src/lib/terboo-games.js'
 
+import { loadArcade } from '../../src/lib/terboo-arcade/index.js'
+import { quickCommand } from '../../src/lib/terboo-arcade/commands.js'
 const pluginConfig = {
     name: 'خمن_العنصر',
     alias: ['tebakkimia'],
     category: 'game',
+    // لعبة TERBOO ARCADE المرتبطة (السجل الموحّد): نفس الأمر، Mini App تفاعلية
+    game: 'q_tebakkimia',
     description: 'خمن العنصر الكيميائي',
     usage: '.خمن_العنصر',
     example: '.خمن_العنصر',
@@ -26,6 +30,9 @@ games.register('خمن_العنصر', {
     answerField: 'lambang'
 })
 
-const { handler, answerHandler } = games.createPlugin('خمن_العنصر')
+await loadArcade()
 
-export { pluginConfig as config, handler, answerHandler }
+// الحركات المكتوبة يلتقطها answerHandler الموحّد في plugins/game/اركيد.js
+const handler = quickCommand('q_tebakkimia')
+
+export { pluginConfig as config, handler }

@@ -1,9 +1,13 @@
 import { games } from '../../src/lib/terboo-games.js'
 
+import { loadArcade } from '../../src/lib/terboo-arcade/index.js'
+import { quickCommand } from '../../src/lib/terboo-arcade/commands.js'
 const pluginConfig = {
     name: 'خمن_الصورة',
     alias: ['tebakgambar'],
     category: 'game',
+    // لعبة TERBOO ARCADE المرتبطة (السجل الموحّد): نفس الأمر، Mini App تفاعلية
+    game: 'q_tebakgambar',
     description: 'خمن الكلمة من الصورة',
     usage: '.خمن_الصورة',
     example: '.خمن_الصورة',
@@ -28,6 +32,9 @@ games.register('خمن_الصورة', {
     hintCount: 3
 })
 
-const { handler, answerHandler } = games.createPlugin('خمن_الصورة')
+await loadArcade()
 
-export { pluginConfig as config, handler, answerHandler }
+// الحركات المكتوبة يلتقطها answerHandler الموحّد في plugins/game/اركيد.js
+const handler = quickCommand('q_tebakgambar')
+
+export { pluginConfig as config, handler }

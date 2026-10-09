@@ -193,6 +193,11 @@ function createServer() {
         return r.fail(403, "cross-origin-denied");
       }
 
+      // كتالوج Mini Apps: صفحة عامة (بلا رمز) تقرأ /api/v1/arcade/catalog
+      if (pathname === "/arcade" || pathname === "/arcade/") {
+        return serveStatic({ method: req.method, url: "/arcade.html" }, res, { root: path.join(HERE, "public"), securityHeaders: SECURITY_HEADERS, requestId });
+      }
+
       // صفحة اللعب التفاعلية (رمز موقّع في المسار، تُخدم كملف ساكن واحد)
       if (/^\/play\/[A-Za-z0-9_.-]{20,400}$/.test(pathname)) {
         return serveStatic({ method: req.method, url: "/play.html" }, res, { root: path.join(HERE, "public"), securityHeaders: PLAY_HEADERS, requestId });

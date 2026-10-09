@@ -17,7 +17,8 @@
 
 import { defineGame } from "./contract.js";
 import { quizGame } from "./questions.js";
-import { getAllData } from "../terboo-game-data.js";
+import { register } from "./locale.js";
+import { checkAnswerAdvanced, getAllData } from "../terboo-game-data.js";
 import { issueAssetToken } from "./assets.js";
 import { noteFailure } from "../terboo-failure-log.js";
 
@@ -93,8 +94,17 @@ function sourceFor(cfg) {
  * @returns {Object} عقد مطبَّع من defineGame
  */
 function legacyQuizGame(cfg) {
+  const id = contractId(cfg);
+  // بنك النصوص يحتاج `g.<id>.name/.desc` وإلا عرضت القوائم المفتاح الخام.
+  // العنوان والوصف عربيان في التسجيل القديم؛ نسجّلهما للغات الثلاث حتى لا يظهر مفتاح،
+  // ونوسم غير العربية بأنها نص المصدر (لا ترجمة آلية مزعومة).
+  register(`g.${id}`, {
+    ar: { name: cfg.title, desc: cfg.description },
+    en: { name: cfg.title, desc: cfg.description },
+    es: { name: cfg.title, desc: cfg.description },
+  });
   const base = quizGame({
-    id: contractId(cfg),
+    id,
     name: { ar: cfg.title, en: cfg.title, es: cfg.title },
     // الأمر العربي ومرادفاته القديمة تبقى كما هي ⇒ عادات المستخدمين لا تتعطل
     aliases: [...new Set([cfg.gameType, ...(cfg.alias || [])].map(norm).filter(Boolean))],
@@ -104,8 +114,27 @@ function legacyQuizGame(cfg) {
     source: sourceFor(cfg),
   });
   const innerView = base.view;
+  const innerParse = base.parseInput;
   return defineGame({
     ...base,
+    // عادة المستخدمين القديمة: كتابة **نص** الإجابة لا حرفها. نقبل الاثنين.
+    // المطابقة تجري على الخادم مقابل خيارات الحالة الحقيقية ⇒ لا ثقة في نص العميل،
+    // ولا تسريب: نعيد فهرس خيار موجود فعلاً أو null.
+    parseInput(text, state, seat) {
+      const letter = innerParse(text, state, seat);
+      if (letter) return letter;
+      const q = state?.qs?.[state.i];
+      if (!q || !Array.isArray(q.options)) return null;
+      const typed = norm(text);
+      if (!typed || typed.length > 48) return null;
+      for (let o = 0; o < q.options.length; o += 1) {
+        const option = norm(q.options[o]);
+        if (!option) continue;
+        if (option.toLowerCase() === typed.toLowerCase()) return { id: "answer", payload: { o } };
+        if (checkAnswerAdvanced(option, typed)?.status === "correct") return { id: "answer", payload: { o } };
+      }
+      return null;
+    },
     cooldown: cfg.cooldown ?? 5,
     description: { ar: cfg.description, en: cfg.description, es: cfg.description },
     // عقد العرض: نضيف مرجع الأصل الموقّع (إن كانت اللعبة بصرية) فوق عرض quizGame

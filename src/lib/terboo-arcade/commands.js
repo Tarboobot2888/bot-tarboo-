@@ -268,6 +268,11 @@ function quickCommand(gameId) {
   return async (m, { sock }) => {
     const args = (m.args || []).map(String);
     const contract = games.contractOf(gameId);
+    // لعبة أسئلة لم يُمكن ترحيلها (بيانات غير كافية لأربعة خيارات) ⇒ رسالة صريحة،
+    // لا سقوط صامت ولا محرك جلسات احتياطي. السبب في games.legacySkipped.
+    if (!contract || contract.legacy) {
+      return m.reply(L(langOf(m), "ui.err.unavailable", { game: gameId }));
+    }
     const verb = (args[0] || "").toLowerCase();
     if (ROOM_VERBS.has(verb) || verb === "a") return arcadeCommand(m, sock, args, { gameId });
     const open = m.isGroup && !args.length && !(m.mentionedJid || []).length

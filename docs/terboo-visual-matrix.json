@@ -4,19 +4,19 @@
  "summary": {
   "commands": 924,
   "eligible": {
-   "text": 476,
-   "buttons": 338,
+   "text": 474,
+   "buttons": 310,
    "media": 91,
-   "hybrid": 7,
-   "html": 12
+   "hybrid": 4,
+   "html": 45
   },
   "delivered": {
-   "text": 476,
-   "buttons": 338,
+   "text": 474,
+   "buttons": 310,
    "media": 91,
-   "hybrid": 19
+   "hybrid": 49
   },
-  "htmlEligible": 12
+  "htmlEligible": 45
  },
  "commands": [
   {
@@ -2772,22 +2772,26 @@
   {
    "command": "أسئلة_ذكاء",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_asahotak:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "ألغاز",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tekateki:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -2798,7 +2802,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:connect4:html",
+    "arcade-html:connect4:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2822,7 +2826,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:xo:html",
+    "arcade-html:xo:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2835,7 +2839,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:snake:html",
+    "arcade-html:snake:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2848,7 +2852,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:g2048:html",
+    "arcade-html:g2048:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2857,11 +2861,13 @@
   {
    "command": "المشنوق",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:hangman:buttons"
+    "arcade-html:hangman:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -2872,7 +2878,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:reversi:html",
+    "arcade-html:reversi:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2881,13 +2887,15 @@
   {
    "command": "بولز",
    "category": "game",
-   "mode": "text",
-   "delivered": "text",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:bulls_cows:text"
+    "arcade-html:bulls_cows:text",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
-   "fallback": "text"
+   "fallback": "text+typed-commands"
   },
   {
    "command": "تحطيم_الطوب",
@@ -2896,7 +2904,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:breakout:html",
+    "arcade-html:breakout:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2905,22 +2913,26 @@
   {
    "command": "ثعبان_وسلم",
    "category": "game",
-   "mode": "hybrid",
+   "mode": "html",
    "delivered": "hybrid",
-   "htmlEligible": false,
+   "htmlEligible": true,
    "reasons": [
-    "arcade:snakes:hybrid"
+    "arcade-html:snakes:hybrid",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "حجرة_ورقة_مقص",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:rps:buttons"
+    "arcade-html:rps:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -2942,7 +2954,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:gomoku:html",
+    "arcade-html:gomoku:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -2951,165 +2963,195 @@
   {
    "command": "خمن_الأغنية",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebaklagu:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الحيوان",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakhewan:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الدراما",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakdrakor:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الدولة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebaknegara:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الشخصية",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakepep:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الصورة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakgambar:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الطعام",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakmakanan:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_العضوة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakjkt48:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_العلم",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakbendera:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_العنصر",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakkimia:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الفيلم",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakfilm:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الكلمات",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebaklirik:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_الكلمة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakkata:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_المثل",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakkalimat:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "خمن_المهنة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebakprofesi:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -3120,7 +3162,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:checkers:html",
+    "arcade-html:checkers:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -3144,7 +3186,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:memory:html",
+    "arcade-html:memory:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -3153,46 +3195,54 @@
   {
    "command": "رتب_الكلمة",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_susunkata:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "ساحة_المعلومات",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:trivia_arena:buttons"
+    "arcade-html:trivia_arena:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "سايمون",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:simon:buttons"
+    "arcade-html:simon:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "سباق_الحروف",
    "category": "game",
-   "mode": "text",
-   "delivered": "text",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:letter_rush:text"
+    "arcade-html:letter_rush:text",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
-   "fallback": "text"
+   "fallback": "text+typed-commands"
   },
   {
    "command": "سودوكو",
@@ -3201,7 +3251,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:sudoku:html",
+    "arcade-html:sudoku:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -3221,11 +3271,13 @@
   {
    "command": "فوازير",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_tebaktebakan:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -3247,7 +3299,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:minesweeper:html",
+    "arcade-html:minesweeper:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -3267,33 +3319,39 @@
   {
    "command": "كلمة_عشوائية",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_kataacak:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "لغز",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_riddle:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "مبارزة_الحساب",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:math_duel:buttons"
+    "arcade-html:math_duel:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -3311,33 +3369,39 @@
   {
    "command": "معركة_الجغرافيا",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "arcade:geo_battle:buttons"
+    "arcade-html:geo_battle:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "معركة_السفن",
    "category": "game",
-   "mode": "hybrid",
+   "mode": "html",
    "delivered": "hybrid",
-   "htmlEligible": false,
+   "htmlEligible": true,
    "reasons": [
-    "arcade:battleship:hybrid"
+    "arcade-html:battleship:hybrid",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
   {
    "command": "من_أنا",
    "category": "game",
-   "mode": "buttons",
-   "delivered": "buttons",
-   "htmlEligible": false,
+   "mode": "html",
+   "delivered": "hybrid",
+   "htmlEligible": true,
    "reasons": [
-    "legacy-quiz:hint+surrender"
+    "arcade-html:q_siapakahaku:buttons",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },
@@ -3348,7 +3412,7 @@
    "delivered": "hybrid",
    "htmlEligible": true,
    "reasons": [
-    "arcade:dotsboxes:html",
+    "arcade-html:dotsboxes:html",
     "bridge:no-proven-client-channel",
     "html-transport:off"
    ],
@@ -3368,11 +3432,13 @@
   {
    "command": "وردل",
    "category": "game",
-   "mode": "hybrid",
+   "mode": "html",
    "delivered": "hybrid",
-   "htmlEligible": false,
+   "htmlEligible": true,
    "reasons": [
-    "arcade:wordle_ar:hybrid"
+    "arcade-html:wordle_ar:hybrid",
+    "bridge:no-proven-client-channel",
+    "html-transport:off"
    ],
    "fallback": "text+typed-commands"
   },

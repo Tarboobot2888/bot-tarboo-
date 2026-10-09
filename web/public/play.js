@@ -245,8 +245,22 @@ function v_delay(view) {
   return view.board?.cells?.some((c) => c.hl) ? 1500 : 900;
 }
 
+/** لون ثابت مشتق من معرّف اللعبة — ألعاب الأسئلة المُرحَّلة لا تتشابه كلها */
+const QUIZ_PALETTE = [
+  ["#06b6d4", "#8b5cf6"], ["#f59e0b", "#ef4444"], ["#22c55e", "#a3e635"], ["#ec4899", "#f59e0b"],
+  ["#6366f1", "#a5b4fc"], ["#14b8a6", "#f472b6"], ["#eab308", "#f43f5e"], ["#3b82f6", "#22d3ee"],
+  ["#a855f7", "#10b981"], ["#f97316", "#38bdf8"], ["#0ea5e9", "#22c55e"], ["#c89b5a", "#f5deb3"],
+];
+function themeOf(gameId) {
+  if (THEMES[gameId]) return THEMES[gameId];
+  const id = String(gameId || "");
+  let h = 0;
+  for (let i = 0; i < id.length; i += 1) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return QUIZ_PALETTE[h % QUIZ_PALETTE.length];
+}
+
 function setTheme(gameId) {
-  const [a, b] = THEMES[gameId] || THEMES.xo;
+  const [a, b] = themeOf(gameId);
   document.documentElement.style.setProperty("--acc", a);
   document.documentElement.style.setProperty("--acc2", b);
 }
@@ -325,10 +339,37 @@ function statusLine(v) {
   return el("div", { class: `status${mine ? " mine" : ""}` }, v.state === "PLAYING" ? el("i", { class: "dot" }) : null, el("span", {}, text));
 }
 
+/**
+ * أصل بصري للسؤال داخل الصفحة (ألعاب «خمن الصورة/العلم/…»).
+ * يُقبل مرجع موقّع من نفس الأصل فقط — لا عنوان خارجي ولا data URL.
+ * هذه هي الصورة الوحيدة في النظام، وهي **داخل Mini App** لا في رسالة واتساب.
+ */
+function assetCard(v) {
+  const ref = String(v.asset?.ref || "");
+  if (!ref || v.asset?.kind !== "image" || !/^[A-Za-z0-9_.-]{20,800}$/.test(ref)) return null;
+  const frame = el("figure", { class: "asset" });
+  const img = el("img", {
+    src: `/api/v1/arcade/asset/${encodeURIComponent(ref)}`,
+    alt: plain(v.asset.alt || v.title || ""),
+    loading: "eager", decoding: "async", referrerpolicy: "no-referrer",
+  });
+  img.addEventListener("error", () => { frame.replaceChildren(el("div", { class: "asset-fail" }, "🖼️")); });
+  frame.append(img);
+  return frame;
+}
+
 // ─────────────── المسرح ───────────────
 function stage(v) {
   const b = v.board;
+  const asset = assetCard(v);
+  if (asset) return el("div", {}, asset, b ? innerStage(v) : null);
   if (!b) return el("div", { class: "status" }, T.waitingPlayers);
+  return innerStage(v);
+}
+
+function innerStage(v) {
+  const b = v.board;
+  if (!b) return null;
   if (b.kind === "track") return trackBoard(v);
   if (v.gameId === "wordle_ar") return wordleBoard(v);
   if (b.kind === "lines") {

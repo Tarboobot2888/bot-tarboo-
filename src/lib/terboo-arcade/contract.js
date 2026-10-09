@@ -63,6 +63,9 @@ function defineGame(def) {
   const contract = {
     id,
     name: def.name || { ar: id, en: id, es: id },
+    // وصف اختياري على العقد. الاحتياط الحقيقي هو بنك النصوص `g.<id>.desc`،
+    // ومن يعرضه يحلّه بـL() — فلا يُطبع مفتاح خام في أي واجهة.
+    description: def.description || null,
     aliases: [...new Set([id, ...(def.aliases || [])].map((a) => String(a).toLowerCase()))],
     category,
     mode,
