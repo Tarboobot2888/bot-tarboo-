@@ -1,7 +1,10 @@
 // ═══════════════════════════════════════════════
 // 🌐 TERBOO ARCADE — اللعب التفاعلي على موقع البوت (HTML حيّ + Server-Authoritative)
 // ───────────────────────────────────────────────
-// • رابط اللعب: /play/<token> — الرمز موقّع HMAC ويحمل {غرفة، جلسة، معرّف اللاعب، انتهاء} فقط (لا JID خام)
+// • رابط اللعب: /play/<token> — موقّع HMAC ويحمل {غرفة، جلسة، بصمة مقعد معمّاة، انتهاء}.
+//   البصمة = HMAC(سر، غرفة+معرّف اللاعب) ⇒ الرمز لا يحمل رقم هاتف ولا JID ولا معرّفاً
+//   قابلاً للعكس. base64url ليس تعمية: أي قيمة داخل الرمز تُقرأ، والرابط يُشارَك ويُسجَّل
+//   في الوسائط والمتصفح — فلا تُوضع فيه هوية. التحقق يطابق البصمة بمقاعد الغرفة.
 // • الصفحة لا تحسب نتيجة: تعرض getView وترسل {actionId, payload, nonce} ⇒ engine.applyAction(source:"html")
 //   فيُطابَق الإجراء حرفياً مع legalActions/validateFree، ويُرفض القديم/المكرر/الموقّت.
 // • العرض المُرسل للمتصفح بلا JID أو hostId أو حالة اللعبة الخام (لا تسريب سفن/بطاقات/إجابات).
@@ -39,16 +42,25 @@ function secret() {
 const b64 = (buf) => Buffer.from(buf).toString("base64url");
 const sign = (body) => crypto.createHmac("sha256", secret()).update(body).digest("base64url").slice(0, 32);
 
+/**
+ * بصمة مقعد معمّاة: مشتقة من (الغرفة + معرّف اللاعب) بالسر نفسه.
+ * غير قابلة للعكس، ومختلفة لكل غرفة ⇒ لا تربط لاعباً بين غرفتين، ولا تكشف رقمه.
+ * لا تُستخدم رقم المقعد لأن مغادرة لاعب قد تُزيح الفهارس فيصبح الرمز لمقعد آخر.
+ */
+function fingerprint(roomId, playerId) {
+  return crypto.createHmac("sha256", secret()).update(`seat:${roomId}:${playerId}`).digest("base64url").slice(0, 22);
+}
+
 /** رمز لعب لمقعد لاعب بشري في غرفة */
 function issuePlayToken(room, jid, ttlMs = TOKEN_TTL) {
   const id = E.idOf(jid);
   const seat = room.players.findIndex((p) => p.id === id && !p.isAI);
   if (seat < 0) return "";
-  const body = b64(JSON.stringify({ r: room.roomId, s: room.sessionId, p: id, e: Date.now() + ttlMs }));
+  const body = b64(JSON.stringify({ r: room.roomId, s: room.sessionId, f: fingerprint(room.roomId, id), e: Date.now() + ttlMs }));
   return `${body}.${sign(body)}`;
 }
 
-/** يتحقق من الرمز (توقيع بزمن ثابت + انتهاء) ⇒ {roomId, sessionId, playerId} أو null */
+/** يتحقق من الرمز (توقيع بزمن ثابت + انتهاء) ⇒ {roomId, sessionId, seatPrint} أو null */
 function verifyPlayToken(token) {
   const text = String(token || "");
   if (text.length > 400) return null;
@@ -59,8 +71,8 @@ function verifyPlayToken(token) {
   if (expected.length !== given.length || !crypto.timingSafeEqual(expected, given)) return null;
   try {
     const data = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-    if (!data?.r || !data?.p || !(data.e > Date.now())) return null;
-    return { roomId: String(data.r), sessionId: String(data.s || ""), playerId: String(data.p) };
+    if (!data?.r || !data?.f || !(data.e > Date.now())) return null;
+    return { roomId: String(data.r), sessionId: String(data.s || ""), seatPrint: String(data.f) };
   } catch (error) {
     noteFailure("arcade-web", error, { where: "terboo-arcade/web:verify", stage: "parse", fallback: "rejected" });
     return null;
@@ -79,7 +91,13 @@ function resolve(token) {
   if (!claims) return { ok: false, code: "bad-token" };
   const room = E.getState(claims.roomId);
   if (!room) return { ok: false, code: "no-room" };
-  const seat = room.players.findIndex((p) => p.id === claims.playerId && !p.isAI);
+  // نطابق البصمة بمقاعد الغرفة الحالية: لا هوية في الرمز، والمقارنة بزمن ثابت
+  const wanted = Buffer.from(claims.seatPrint);
+  const seat = room.players.findIndex((p) => {
+    if (p.isAI || !p.id) return false;
+    const print = Buffer.from(fingerprint(room.roomId, p.id));
+    return print.length === wanted.length && crypto.timingSafeEqual(print, wanted);
+  });
   if (seat < 0) return { ok: false, code: "not-a-player" };
   return { ok: true, room, seat, player: room.players[seat], claims };
 }
@@ -147,4 +165,4 @@ function surrenderFor(token) {
   return { ok: Boolean(res.ok), code: res.ok ? null : res.code };
 }
 
-export { actionFor, issuePlayToken, playUrl, publicView, rematchFor, resolve, stateFor, surrenderFor, verifyPlayToken };
+export { actionFor, fingerprint, issuePlayToken, playUrl, publicView, rematchFor, resolve, stateFor, surrenderFor, verifyPlayToken };

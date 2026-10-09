@@ -3,7 +3,9 @@
    يرث الرموز (tokens) من play.css: نفس الهوية، بلا تكرار نظام تصميم.
    لا صور: كل بطاقة تُرسم بـCSS/SVG/إيموجي.
    ─────────────────────────────────────────────── */
-.arcade-body { padding: 0; }
+/* قص أي تجاوز أفقي زخرفي عند 320px — clip لا ينشئ حاوية تمرير */
+.arcade-body { padding: 0; overflow-x: clip; }
+html:has(.arcade-body) { overflow-x: clip; }
 .cat-shell { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 18px 16px calc(32px + env(safe-area-inset-bottom)); }
 
 .cat-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
