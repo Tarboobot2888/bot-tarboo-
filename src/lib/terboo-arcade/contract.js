@@ -131,7 +131,9 @@ function legacyQuizContract(cfg) {
     cooldown: cfg.cooldown,
     permissions: { group: "member", private: "user" },
     localization: ["ar"],
-    assets: cfg.hasImage ? { image: cfg.imageField } : {},
+    // اسم الحقل في ملف البيانات فقط (بيانات وصفية). سُمّي سابقاً `image` فأوهم
+    // أنه صورة؛ لا يُرسل ولا يُحوَّل إلى بكسل في أي مسار.
+    assets: cfg.hasImage ? { visualSourceField: cfg.imageField } : {},
     ai: null,
     icon: cfg.emoji,
     legacyCommand: cfg.gameType,

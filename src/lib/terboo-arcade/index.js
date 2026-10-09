@@ -10,9 +10,14 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { games } from "../terboo-games.js";
 import { noteFailure } from "../terboo-failure-log.js";
+import { migrateLegacyQuizzes } from "./legacy-quiz.js";
 
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "games");
 let loading = null;
+
+let legacyReport = { migrated: [], skipped: [] };
+/** حجم سجل الأسئلة القديم عند آخر ترحيل — الحارس الرخيص لمنع إعادة العمل */
+let legacySeen = -1;
 
 async function loadArcade() {
   if (loading) return loading;
@@ -27,14 +32,44 @@ async function loadArcade() {
         noteFailure("arcade", error, { where: "terboo-arcade/index:loadArcade", stage: file, fallback: "game-skipped" });
       }
     }
+    // ألعاب الأسئلة القديمة: تُرحَّل إلى نفس العقد ونفس محرك الأسئلة (لا سجل موازٍ).
+    // تسجيلها يحدث وقت تحميل بلوقناتها، فقد يكون السجل فارغاً هنا ⇒ الترحيل كسول
+    // عبر ensureLegacyQuizzes() ويُعاد فقط إن كبر السجل.
+    loaded.push(...ensureLegacyQuizzes().migrated);
     return loaded;
   })();
   return loading;
 }
 
-/** عقود الأركيد فقط (بلا ألعاب الأسئلة القديمة) */
+/**
+ * يرحّل أي لعبة أسئلة قديمة سُجّلت ولم تُرحَّل بعد. غير مكلف عند عدم التغيّر:
+ * مقارنة حجم السجل فقط. يُستدعى من كل مدخل يعدّ العقود أو يحلّ أمر لعبة.
+ */
+function ensureLegacyQuizzes() {
+  if (games.registry.size === legacySeen) return legacyReport;
+  legacySeen = games.registry.size;
+  try {
+    const run = migrateLegacyQuizzes(games);
+    legacyReport = {
+      migrated: [...new Set([...legacyReport.migrated, ...run.migrated])],
+      skipped: run.skipped,
+    };
+  } catch (error) {
+    noteFailure("arcade", error, { where: "terboo-arcade/index:ensureLegacyQuizzes", stage: "migrate", fallback: "legacy-text-path" });
+  }
+  return legacyReport;
+}
+
+/** تقرير ترحيل ألعاب الأسئلة القديمة (يُستخدم في التدقيق والتقارير المولّدة) */
+function legacyQuizReport() {
+  ensureLegacyQuizzes();
+  return { migrated: [...legacyReport.migrated], skipped: legacyReport.skipped.map((x) => ({ ...x })) };
+}
+
+/** عقود الأركيد فقط — تشمل ألعاب الأسئلة المُرحَّلة (كلها عقود أركيد الآن) */
 function arcadeContracts() {
+  ensureLegacyQuizzes();
   return [...games.arcade.values()];
 }
 
-export { arcadeContracts, games, loadArcade };
+export { arcadeContracts, ensureLegacyQuizzes, games, legacyQuizReport, loadArcade };

@@ -1,89 +1,32 @@
-import { createCanvas, loadImage } from '@napi-rs/canvas'
-import axios from 'axios'
-import { fitDisplayImage } from "./terboo-asset-manager.js";
+// ═══════════════════════════════════════════════
+// 🪜 ثعبان وسلم — طوبولوجيا اللوحة فقط (بيانات نقية)
+// ───────────────────────────────────────────────
+// هذا الملف كان يحتوي مولّد صورة لوحة على @napi-rs/canvas (`drawBoard`) يجلب
+// صورة اللوحة وصور البيادق من الإنترنت ويعيد PNG buffer، إضافة إلى روابط
+// ملصقات نرد (`DICE_STICKERS`). كلها حُذفت ضمن سياسة «لا صور في مسارات الألعاب»:
+//   • `drawBoard` و`PLAYER_IMAGES` و`DICE_STICKERS` لم يكن لها أي مستهلك في المشروع
+//     (مسار ميت)، لكنها كانت مولّد صور لوحة جاهزاً للاستخدام ⇒ أُزيل من الجذر.
+//   • اللوحة تُرسم الآن بعناصر HTML/CSS داخل Mini App من `view.board` (kind: "track").
+// المستهلك الوحيد الباقي هو عقد الأركيد `games/snakes.js` وهو يحتاج `snakesLadders` فقط.
+// ═══════════════════════════════════════════════
 
+/**
+ * خرائط اللوحة: مفاتيح السلالم والثعابين (from ⇒ to) على رقعة 1..100.
+ * قيمة أكبر = سلّم يصعد، قيمة أصغر = ثعبان يهبط.
+ */
 const BOARD_MAPS = [
-    {
-        map: "https://telegra.ph/file/46a0c38104f79cdbfe83f.jpg",
-        name: "Classic",
-        snakesLadders: {
-            2: 38, 7: 14, 8: 31, 15: 26, 21: 42, 28: 84, 36: 44, 51: 67, 78: 98, 71: 91, 87: 94,
-            16: 6, 46: 25, 49: 11, 62: 19, 64: 60, 74: 53, 89: 68, 92: 88, 95: 75, 99: 80
-        },
-        stabil_x: 20,
-        stabil_y: 20
-    }
-];
-const PLAYER_IMAGES = [
-    "https://telegra.ph/file/30f92f923fb0484f0e4e0.png",
-    "https://telegra.ph/file/6e07b5f30b24baedc7822.png",
-    "https://telegra.ph/file/34f47137df0dc9aa9c15a.png",
-    "https://telegra.ph/file/860b5df98963a1f14a91c.png"
-];
-const DICE_STICKERS = [
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/1.webp",
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/2.webp",
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/3.webp",
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/4.webp",
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/5.webp",
-    "https://raw.githubusercontent.com/fgmods/fg-team/main/games/dados/6.webp"
+  {
+    name: "Classic",
+    snakesLadders: {
+      2: 38, 7: 14, 8: 31, 15: 26, 21: 42, 28: 84, 36: 44, 51: 67, 78: 98, 71: 91, 87: 94,
+      16: 6, 46: 25, 49: 11, 62: 19, 64: 60, 74: 53, 89: 68, 92: 88, 95: 75, 99: 80,
+    },
+  },
 ];
 
-/**
- * Draw game board with player positions
- * @param {string} boardImageURL - URL of the board image
- * @param {number|null} user1 - Position of player 1 (1-100) or null
- * @param {number|null} user2 - Position of player 2 (1-100) or null
- * @param {number|null} user3 - Position of player 3 (1-100) or null
- * @param {number|null} user4 - Position of player 4 (1-100) or null
- * @param {number} stabil_x - X offset for calibration
- * @param {number} stabil_y - Y offset for calibration
- * @returns {Promise<Buffer|null>} PNG buffer or null on error
- */
-async function drawBoard(boardImageURL, user1 = null, user2 = null, user3 = null, user4 = null, stabil_x = 20, stabil_y = 20) {
-    try {
-        const boardImgRes = await axios.get(boardImageURL, { responseType: 'arraybuffer', timeout: 15000 });
-        const boardImg = await loadImage(boardImgRes.data);
-        const canvas = createCanvas(boardImg.width, boardImg.height);
-        const ctx = canvas.getContext('2d');
-        
-        ctx.drawImage(boardImg, 0, 0);
-
-        const playerPositions = [user1, user2, user3, user4].map((pos, idx) => ({
-            position: pos,
-            index: idx
-        })).filter(p => p.position !== null && p.position >= 1 && p.position <= 100);
-
-        for (const player of playerPositions) {
-            const position = player.position;
-            const row = Math.floor((position - 1) / 10);
-            const col = (row % 2 === 0) ? (position - 1) % 10 : 9 - (position - 1) % 10;
-            const x = col * 60 + stabil_x;
-            const y = (9 - row) * 60 + stabil_y;
-
-            try {
-                const playerImgRes = await axios.get(PLAYER_IMAGES[player.index], { responseType: 'arraybuffer', timeout: 15000 });
-                const playerImg = await loadImage(playerImgRes.data);
-                ctx.drawImage(playerImg, x - 4, y - 4, 50, 50);
-            } catch (e) {
-                console.log(`[ULARTANGGA] Failed to load player ${player.index} image:`, e.message);
-            }
-        }
-
-        // لوحة اللعبة من رابط خارجي بمقاس غير معروف ⇒ داخل حدود العرض (720–1080) بوضوح
-        return fitDisplayImage(await canvas.encode('png'));
-    } catch (error) {
-        console.error('[ULARTANGGA] Error drawing board:', error.message);
-        return null;
-    }
-}
-
-/**
- * Get random board map configuration
- * @returns {Object} Map configuration
- */
+/** خريطة لوحة عشوائية */
 function getRandomMap() {
-    return BOARD_MAPS[Math.floor(Math.random() * BOARD_MAPS.length)];
+  return BOARD_MAPS[Math.floor(Math.random() * BOARD_MAPS.length)];
 }
 
-export { drawBoard, getRandomMap, BOARD_MAPS, PLAYER_IMAGES, DICE_STICKERS }
+export { BOARD_MAPS, getRandomMap };

@@ -20,12 +20,9 @@ import { addExpWithLevelCheck } from "./terboo-level.js";
 import { checkFastAnswer } from "./terboo-context.js";
 import config from "../../config.js";
 import { defineGame, legacyQuizContract } from "./terboo-arcade/contract.js";
-import sharp from "sharp";
+import { tryLegacyQuizContract } from "./terboo-arcade/legacy-quiz.js";
 import { buildTextGameHtml, relayHtmlGame, resolveHtmlTransport } from "./terboo-html-game.js";
-let fetchBuffer;
-try {
-  fetchBuffer = (await import("./terboo-utils.js")).fetchBuffer;
-} catch (error) { noteFailure("games", error, {where: "src/lib/terboo-games.js:30",stage: "import:terboo-utils"}); }
+// fetchBuffer حُذف: كان يُستخدم فقط لتنزيل صور الأسئلة لإرسالها كرسالة صورة.
 
 const WIN_MESSAGES = [
   "🌟 *أحسنت! ذكاء خارق!*",
@@ -48,37 +45,25 @@ const SURRENDER_MESSAGES = [
   "🏳️ *يا خسارة استسلمت...*",
 ];
 
-/** ضغط صورة السؤال وتضمينها داخل HTML، بدلاً من إرسال لوحة/صورة منفصلة. */
-async function inlineQuizImage(imageBuffer) {
-  if (!imageBuffer) return "";
-  const source = Buffer.isBuffer(imageBuffer) ? imageBuffer : Buffer.from(imageBuffer);
-  const qualities = [42, 34, 27];
-  for (const quality of qualities) {
-    try {
-      const resized = await sharp(source, { failOn: "none" })
-        .rotate()
-        .resize({ width: quality === 42 ? 360 : 300, height: quality === 42 ? 300 : 240, fit: "inside", withoutEnlargement: true })
-        .jpeg({ quality, mozjpeg: true })
-        .toBuffer();
-      // 23 KB كحدّ للصورة الثنائية لتبقى الرسالة كاملة ضمن حدّ 64 KB للقالب.
-      if (resized.length <= 23_000) return `data:image/jpeg;base64,${resized.toString("base64")}`;
-    } catch (error) {
-      noteFailure("games", error, { where: "terboo-games:inlineQuizImage", stage: "compress", fallback: "no-inline-image" });
-      return "";
-    }
-  }
-  return "";
-}
+// ═══════════════════════════════════════════════
+// سياسة صور الألعاب (§6): لا ترسل أي لعبة صورة في أي رسالة واتساب — إطلاقاً.
+//   • حُذفت inlineQuizImage (ضغط sharp + Base64 داخل HTML الرسالة).
+//   • حُذف مسار الرجوع `image: !htmlResult.relayed && imageBuffer` عند فشل HTML.
+//   • الألعاب البصرية (خمن الصورة/العلم/…) تعرض الأصل **داخل صفحة Mini App**
+//     عبر رمز موقّع same-origin (terboo-arcade/assets.js)، لا كرسالة صورة.
+// عند فشل النقل: نص مختصر + رابط Mini App. لا صورة، ولا حلقة إعادة محاولة.
+// ═══════════════════════════════════════════════
 
 /**
- * بطاقة سؤال HTML ثلاثية الأبعاد + بطاقة أزرار واتساب موثوقة كمسار تحكم واحتياط.
- * صور أسئلة التخمين تُضمّن كـJPEG Base64 صغير داخل HTML؛ لا تُرسل صور لوحات أو صور معاينة.
- * تبقى إجابة السؤال مرتبطة بمفتاح الرسالة الأصلية كي لا يتغير نظام الجلسات.
+ * بطاقة سؤال: HTML مدقّق + أزرار واتساب أصلية + رابط Mini App. **بلا أي صورة**.
+ * @param {Object} sock
+ * @param {Object} m
+ * @param {Object} cfg تسجيل اللعبة
+ * @param {string} text نص السؤال الجاهز
+ * @param {string} [miniAppUrl] رابط Mini App لهذه الجلسة (إن توفر موقع عام)
  */
-async function sendQuizCard(sock, m, cfg, text, imageBuffer = null) {
+async function sendQuizCard(sock, m, cfg, text, miniAppUrl = "") {
   const prefix = m.prefix || config.command?.prefix || ".";
-  let imageDataUrl = "";
-  if (imageBuffer) imageDataUrl = await inlineQuizImage(imageBuffer);
 
   let htmlResult = { relayed: false, reason: "not-attempted" };
   try {
@@ -88,10 +73,10 @@ async function sendQuizCard(sock, m, cfg, text, imageBuffer = null) {
       title: cfg.title,
       body: cfg.description,
       text,
-      status: cfg.hasImage ? "VISUAL CHALLENGE" : "QUESTION",
+      // لا تمييز بصري معتمد على صورة: نفس البطاقة لكل الأسئلة
+      status: "QUESTION",
       lang: "ar",
-      theme: cfg.hasImage ? "FANTASY" : "NEON",
-      imageDataUrl,
+      theme: "NEON",
     });
     htmlResult = await relayHtmlGame(sock, m.chat, html, {
       transport: resolveHtmlTransport(config.arcade?.html?.transport),
@@ -107,23 +92,56 @@ async function sendQuizCard(sock, m, cfg, text, imageBuffer = null) {
       cardId: `quiz:${cfg.gameType}`,
       text,
       footer: `${cfg.emoji} ${cfg.title}`,
-      // الصورة الأصلية تخص السؤال نفسه فقط وتُستخدم كاحتياط عند تعذّر بناء/إرسال HTML.
-      image: !htmlResult.relayed && imageBuffer ? { key: `quiz-${cfg.gameType}-${Date.now()}`, buffer: imageBuffer } : null,
+      // لا حقل image: مسار الألعاب لا يرسل صوراً بأي حال من الأحوال
       buttons: [
         { id: `${prefix}${cfg.gameType}`, text: "💡 تلميح" },
         { id: "استسلام", text: "🏳️ استسلام" },
       ],
+      links: miniAppUrl ? [{ text: "🎮 افتح اللعبة", url: miniAppUrl }] : [],
     });
     return sent?.key ? { ...sent, html: htmlResult } : null;
   } catch (error) {
     noteFailure("games", error, { where: "terboo-games:sendQuizCard", stage: "send-card", fallback: "plain-text" });
     try {
-      const sent = await sock.sendMessage(m.chat, { text }, { quoted: m });
+      // المسار الاحتياطي الأخير: نص فقط (+ رابط Mini App إن وُجد). لا صورة.
+      const body = miniAppUrl ? `${text}\n\n🎮 ${miniAppUrl}` : text;
+      const sent = await sock.sendMessage(m.chat, { text: body }, { quoted: m });
       return sent?.key ? { ...sent, html: htmlResult } : null;
     } catch (fallbackError) {
       noteFailure("games", fallbackError, { where: "terboo-games:sendQuizCard", stage: "plain-text", fallback: "none" });
       return null;
     }
+  }
+}
+
+/**
+ * رابط Mini App لهذه اللعبة ولهذا اللاعب (أو "" إن لم يتوفر موقع عام).
+ * اللعبة المُرحَّلة لها عقد أركيد (q_*) ⇒ غرفة + رمز مقعد موقّع، فيلعب اللاعب
+ * نفس اللعبة بخيارات A–D ومؤقت داخل الصفحة. لا يُستخدم هذا الرابط لحساب أي نتيجة
+ * على العميل: كل إجراء يعود إلى engine.applyAction.
+ */
+async function quizMiniAppUrl(cfg, m) {
+  try {
+    const { publicBaseUrl } = await import("./terboo-website.js");
+    if (!publicBaseUrl()) return "";
+    const { contractId } = await import("./terboo-arcade/legacy-quiz.js");
+    const gameId = contractId(cfg);
+    if (!games.arcade.has(gameId)) return "";
+    const E = await import("./terboo-arcade/engine.js");
+    const W = await import("./terboo-arcade/web.js");
+    const existing = E.activeRoomsOf(m.sender).find((r) => r.gameId === gameId && r.state === "PLAYING");
+    const room = existing || E.createRoom({
+      gameId,
+      chat: `quiz:${m.sender}`,
+      isGroup: false,
+      host: { jid: m.sender, name: m.pushName || "Player" },
+      options: { lang: "ar" },
+    }).room;
+    if (!room) return "";
+    return W.playUrl(room, m.sender) || "";
+  } catch (error) {
+    noteFailure("games", error, { where: "terboo-games:quizMiniAppUrl", stage: cfg.gameType, fallback: "no-link" });
+    return "";
   }
 }
 
@@ -136,6 +154,8 @@ class TerbooGames {
     this.registry = new Map();
     // TERBOO ARCADE: نفس السجل يحمل عقود الألعاب الموحّدة (لا سجل موازٍ)
     this.arcade = new Map();
+    // ألعاب أسئلة لم يُمكن ترحيلها (بيانات غير كافية) ⇒ سبب صريح، لا ادّعاء ترحيل
+    this.legacySkipped = new Map();
   }
 
   /** يسجّل لعبة بالعقد الموحّد (terboo-arcade/contract.js) ويعيد العقد المطبَّع */
@@ -182,7 +202,14 @@ class TerbooGames {
       alias: [],
       hintCount: 2,
     };
-    this.registry.set(gameType, { ...defaults, ...cfg, gameType });
+    const merged = { ...defaults, ...cfg, gameType };
+    this.registry.set(gameType, merged);
+    // ترحيل فوري إلى العقد الموحّد: اللعبة تصبح Mini App حقيقية (خيارات A–D
+    // ومؤقت ونقاط من الخادم) بنفس أمرها ومرادفاتها. السجل واحد — لا سجل موازٍ.
+    // التسجيل هنا (لا كسولاً) حتى تراها كل المداخل: المحرك، الكتالوج، الأوامر.
+    const made = tryLegacyQuizContract(merged);
+    if (made.ok) this.arcade.set(made.contract.id, made.contract);
+    else this.legacySkipped.set(gameType, made.reason);
   }
 
   get(gameType) {
@@ -226,41 +253,22 @@ class TerbooGames {
       const answer = question[cfg.answerField];
       let sentMsg;
 
-      if (cfg.hasImage && fetchBuffer) {
-        let imageBuffer;
-        try {
-          imageBuffer = await fetchBuffer(question[cfg.imageField]);
-        } catch {
-          await m.reply("❌ *فشل تحميل الصورة*\n\n> حاول مرة تانية!");
-          return;
-        }
-
-        let caption = `${cfg.emoji} *${cfg.title}*\n\n`;
-        if (cfg.questionField && question[cfg.questionField]) {
-          caption += `> ${question[cfg.questionField]}\n`;
-        }
-        caption += `💡 تلميح: *${getHint(answer, cfg.hintCount)}*\n`;
-        caption += `⏱️ الوقت: *${cfg.timeout / 1000} ثانية*\n`;
-        caption += `🎁 الجائزة: *طاقة، عملات، خبرة*\n\n`;
-        caption += `_جاوب مباشرة أو اكتب "استسلام"\nكل إجابة غلط بتزود التلميح_`;
-        caption += `\n⚠️ *رد على هذه الرسالة بالإجابة*`;
-
-        sentMsg = await sendQuizCard(sock, m, cfg, caption, imageBuffer);
-        if (!sentMsg?.key) sentMsg = await sock.sendMessage(chatId, { text: caption }, { quoted: m });
-      } else {
-        let text = `${cfg.emoji} *${cfg.title}*\n\n`;
-        if (cfg.questionField && question[cfg.questionField]) {
-          text += `> ${question[cfg.questionField]}\n\n`;
-        }
-        text += `💡 تلميح: *${getHint(answer, cfg.hintCount)}*\n`;
-        text += `⏱️ الوقت: *${cfg.timeout / 1000} ثانية*\n`;
-        text += `🎁 الجائزة: *طاقة، عملات، خبرة*\n\n`;
-        text += `_جاوب مباشرة أو اكتب "استسلام"\nكل إجابة غلط بتزود التلميح_`;
-        text += `\n⚠️ *رد على هذه الرسالة بالإجابة*`;
-
-        sentMsg = await sendQuizCard(sock, m, cfg, text);
-        if (!sentMsg?.key) sentMsg = await sock.sendMessage(chatId, { text }, { quoted: m });
+      // اللعبة البصرية لم تعد ترسل صورة: الأصل يُعرض داخل Mini App على same-origin.
+      // لا تنزيل buffer، ولا caption لصورة، ولا رجوع إلى رسالة صورة عند الفشل.
+      const visual = cfg.hasImage;
+      let text = `${cfg.emoji} *${cfg.title}*\n\n`;
+      if (cfg.questionField && question[cfg.questionField]) {
+        text += `> ${question[cfg.questionField]}\n\n`;
       }
+      if (visual) text += `🖼️ *الصورة داخل اللعبة التفاعلية* — افتح الرابط لرؤيتها\n`;
+      text += `💡 تلميح: *${getHint(answer, cfg.hintCount)}*\n`;
+      text += `⏱️ الوقت: *${cfg.timeout / 1000} ثانية*\n`;
+      text += `🎁 الجائزة: *طاقة، عملات، خبرة*\n\n`;
+      text += `_جاوب مباشرة أو اكتب "استسلام"\nكل إجابة غلط بتزود التلميح_`;
+      text += `\n⚠️ *رد على هذه الرسالة بالإجابة*`;
+
+      sentMsg = await sendQuizCard(sock, m, cfg, text, await quizMiniAppUrl(cfg, m));
+      if (!sentMsg?.key) sentMsg = await sock.sendMessage(chatId, { text }, { quoted: m });
 
       createSession(chatId, gameType, question, sentMsg.key, cfg.timeout);
 

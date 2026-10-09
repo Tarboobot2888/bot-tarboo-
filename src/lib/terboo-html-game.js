@@ -45,8 +45,30 @@ const escapeHtml = (value) => String(value ?? "")
 const FORBIDDEN_TAGS = ["script", "iframe", "object", "embed", "frame", "frameset", "link", "base", "form", "input", "textarea", "select", "applet", "foreignobject", "portal", "audio", "video", "source", "track"];
 const FORBIDDEN_PROTOCOLS = /(javascript|vbscript|file|blob)\s*:|data\s*:\s*(text\/html|application|image\/svg)/i;
 
+/** يفصل المستند إلى وسوم ونص: النص المُهرَّب لا يُفحَص كأنه markup. */
+const TAG_RE = /<\/?([a-zA-Z][\w:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)\/?>/g;
+
+/**
+ * قيم السمات كما كُتبت (مع إزالة علامات التنصيص) لكل سمة في وسم واحد.
+ * @returns {Array<{name:string, value:string}>}
+ */
+function attrsOf(rawAttrs) {
+  const out = [];
+  const re = /([a-zA-Z_:][\w:.-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+  let m;
+  while ((m = re.exec(String(rawAttrs || "")))) {
+    if (!m[1]) continue;
+    out.push({ name: m[1].toLowerCase(), value: m[2] ?? m[3] ?? m[4] ?? "" });
+  }
+  return out;
+}
+
 /**
  * يفحص قالب HTML.
+ *
+ * الفحص واعٍ بالبنية: السمات تُفحَص بأسمائها وقيمها، والنص المُهرَّب لا يُفحَص كـmarkup.
+ * الفحص بـregex خام على المستند كله كان يرفض قوالب سليمة (نص لاعب مُهرَّب داخل
+ * `aria-label` يحتوي ` onerror=` حرفياً) ويقبل الخطر نفسه بلا تمييز.
  * @returns {{ok:boolean, errors:string[], bytes:number}}
  */
 function validateTemplate(html) {
@@ -55,17 +77,46 @@ function validateTemplate(html) {
   const bytes = Buffer.byteLength(text, "utf8");
   if (!text.trim()) errors.push("empty");
   if (bytes > MAX_HTML_BYTES) errors.push(`too-large:${bytes}`);
-  for (const tag of FORBIDDEN_TAGS) {
-    if (new RegExp(`<\\s*${tag}[\\s>/]`, "i").test(text)) errors.push(`tag:${tag}`);
+
+  const forbidden = new Set(FORBIDDEN_TAGS);
+  const styles = [];
+  let match;
+  TAG_RE.lastIndex = 0;
+  while ((match = TAG_RE.exec(text))) {
+    const tag = match[1].toLowerCase();
+    if (forbidden.has(tag)) errors.push(`tag:${tag}`);
+    for (const { name, value } of attrsOf(match[2])) {
+      // سمات الأحداث: الاسم وحده يحسم — لا قيمة مُهرَّبة تُشبهها
+      if (/^on[a-z]+$/.test(name)) errors.push("event-handler-attribute");
+      if (!value) continue;
+      if (FORBIDDEN_PROTOCOLS.test(value)) errors.push("forbidden-protocol");
+      if (["src", "href", "action", "xlink:href", "srcset", "poster", "formaction"].includes(name)
+        && /^\s*(?:https?:)?\/\//i.test(value)) errors.push("external-resource");
+      if (name === "style" && cssErrorsOf(value).length) errors.push(...cssErrorsOf(value));
+      if (name === "http-equiv") errors.push("meta-http-equiv");
+    }
   }
-  if (/<[^>]+\son[a-z]+\s*=/i.test(text)) errors.push("event-handler-attribute");
-  if (FORBIDDEN_PROTOCOLS.test(text)) errors.push("forbidden-protocol");
-  if (/(?:src|href|action|xlink:href)\s*=\s*["']?\s*(?:https?:)?\/\//i.test(text)) errors.push("external-resource");
-  if (/url\(\s*["']?\s*(?:https?:)?\/\//i.test(text)) errors.push("external-css-url");
-  if (/@import|expression\s*\(|behavior\s*:/i.test(text)) errors.push("css-injection");
-  if (/<\s*meta[^>]*http-equiv/i.test(text)) errors.push("meta-http-equiv");
-  if ((text.match(/<\s*style/gi) || []).length > 2) errors.push("too-many-styles");
-  return { ok: errors.length === 0, errors, bytes };
+  const STYLE_RE = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
+  while ((match = STYLE_RE.exec(text))) styles.push(match[1]);
+  for (const css of styles) errors.push(...cssErrorsOf(css));
+  if (styles.length > 2) errors.push("too-many-styles");
+  return { ok: errors.length === 0, errors: [...new Set(errors)], bytes };
+}
+
+/**
+ * أخطاء CSS داخل كتلة style أو سمة style.
+ * `behavior:` تعني خاصية IE القديمة فقط — `scroll-behavior:` و`overscroll-behavior:`
+ * خصائص قياسية سليمة، فلا تُطابَق بسلسلة فرعية.
+ */
+function cssErrorsOf(css) {
+  const out = [];
+  const text = String(css || "");
+  if (/@import/i.test(text)) out.push("css-injection");
+  if (/\bexpression\s*\(/i.test(text)) out.push("css-injection");
+  if (/(?:^|[;{\s])behavior\s*:/i.test(text)) out.push("css-injection");
+  if (/url\(\s*["']?\s*(?:https?:)?\/\//i.test(text)) out.push("external-css-url");
+  if (FORBIDDEN_PROTOCOLS.test(text)) out.push("forbidden-protocol");
+  return out;
 }
 
 // ─────────────── القوالب (حسب نوع اللوحة) ───────────────
@@ -157,15 +208,12 @@ function buildGameHtml(view, { theme = null, lang = view?.lang || "ar", labels =
   const dir = dirOf(lang);
   const safeLang = /^[a-z]{2}(?:-[A-Z]{2})?$/.test(String(lang || "")) ? String(lang) : "ar";
   // بعض الألعاب (مثل وردل العربي) لها لوحة HTML مخصصة بالإضافة إلى سجل نصي احتياطي.
-  const visualBoard = view?.image || view?.board;
+  // `view.visualBoard` (سابقاً `view.image`) هو **View Model منظَّم** لشبكة/مسار،
+  // يُصيَّر عناصرَ HTML — لا بكسل ولا صورة. أُعيدت تسميته لإزالة الغموض عن حارس الصور.
+  const visualBoard = view?.visualBoard || view?.board;
   const render = htmlGameRegistry.get(visualBoard?.kind) || (() => "");
-  // صور الألغاز الفعلية (مثل خمن الصورة) تُضمّن كـdata URL مضغوط داخل البطاقة،
-  // بدلاً من إرسال رسالة صورة منفصلة. نقبل JPEG/PNG/WebP Base64 فقط وبحد صغير.
-  const rawInlineImage = String(view?.inlineImageDataUrl || "");
-  const inlineImage = rawInlineImage.length <= 36_000
-    && /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(rawInlineImage)
-    ? rawInlineImage
-    : "";
+  // لا صور داخل بطاقة اللعبة: لا data URL ولا Base64 ولا <img>. الأصول البصرية
+  // للألعاب القائمة على صورة تُعرض داخل صفحة Mini App على same-origin فقط.
   const stateLabel = String(view?.status || view?.state || "");
   const title = String(view?.title || "TERBOO ARCADE");
   const players = (view?.players || []).map((p, i) => {
@@ -185,7 +233,7 @@ function buildGameHtml(view, { theme = null, lang = view?.lang || "ar", labels =
     `<header class="ta-head"><span class="ta-emblem" aria-hidden="true">${escapeHtml(view?.icon || "🎮")}</span><div class="ta-brand"><small class="ta-kicker">TERBOO ARCADE · 3D EDITION</small><strong class="ta-title">${escapeHtml(title)}</strong></div><span class="ta-pill">${escapeHtml(stateLabel)}</span></header>`,
     `<div class="ta-meta"><span>${escapeHtml(gameCode || "ARCADE")}</span><i></i><span>${safeLang.startsWith("ar") ? "لعبة تفاعلية" : safeLang.startsWith("es") ? "JUEGO EN VIVO" : "LIVE GAME"}</span></div>`,
     players ? `<div class="ta-players">${players}</div>` : "",
-    inlineImage ? `<figure class="ta-asset-frame"><img class="ta-asset-image" src="${inlineImage}" alt="${escapeHtml(title)}" loading="eager"></figure>` : "",
+    // (لا <figure>/<img> هنا: مسار الصور في الألعاب محذوف بالكامل)
     visualBoard ? `<section class="ta-playfield" aria-label="${escapeHtml(title)}">${render(visualBoard)}</section>` : `<section class="ta-empty">${escapeHtml(view?.description || stateLabel || "🎮")}</section>`,
     panels ? `<div class="ta-panels">${panels}</div>` : "",
     actionItems ? `<div class="ta-actions">${actionItems}</div>` : "",
@@ -201,7 +249,7 @@ function buildGameHtml(view, { theme = null, lang = view?.lang || "ar", labels =
  * بطاقة HTML عامة لرسائل الألعاب القديمة (الحالة، النتائج، السجلات والقوائم النصية).
  * لا تغيّر حالة اللعبة؛ إنها طبقة عرض فقط وتبقى أوامر/أزرار واتساب هي وسيلة التحكم.
  */
-function buildTextGameHtml({ gameId = "ARCADE", icon = "🎮", title = "TERBOO ARCADE", body = "", text = "", status = "LIVE", lang = "ar", theme = null, imageDataUrl = "" } = {}) {
+function buildTextGameHtml({ gameId = "ARCADE", icon = "🎮", title = "TERBOO ARCADE", body = "", text = "", status = "LIVE", lang = "ar", theme = null } = {}) {
   const plain = (value) => String(value ?? "")
     .replace(/\*([^*]+)\*/g, "$1")
     .replace(/_([^_]+)_/g, "$1")
@@ -223,7 +271,6 @@ function buildTextGameHtml({ gameId = "ARCADE", icon = "🎮", title = "TERBOO A
     category: "arcade",
     state: "PLAYING",
     status: plain(status).slice(0, 80) || "LIVE",
-    inlineImageDataUrl: imageDataUrl,
     board: { kind: "lines", lines: lines.length ? lines : ["—"] },
   }, { theme, lang });
 }

@@ -332,7 +332,7 @@ function stage(v) {
   if (b.kind === "track") return trackBoard(v);
   if (v.gameId === "wordle_ar") return wordleBoard(v);
   if (b.kind === "lines") {
-    if (v.image?.cells?.length) return el("div", {}, gridBoard(v, v.image, { readOnly: true }), linesCard(v, b.lines.filter((l) => !/^[⬜🟩🟨⬛\s]+$/u.test(l))));
+    if (v.visualBoard?.cells?.length) return el("div", {}, gridBoard(v, v.visualBoard, { readOnly: true }), linesCard(v, b.lines.filter((l) => !/^[⬜🟩🟨⬛\s]+$/u.test(l))));
     return linesCard(v, b.lines);
   }
   return gridBoard(v, b);
@@ -410,7 +410,7 @@ function xoMark(kind, cell) {
 
 function gridBoard(v, b, { readOnly = false } = {}) {
   const cols = b.cols || 3;
-  const prevCells = S.prev?.roomId === v.roomId ? (readOnly ? S.prev?.image?.cells : S.prev?.board?.cells) || [] : [];
+  const prevCells = S.prev?.roomId === v.roomId ? (readOnly ? S.prev?.visualBoard?.cells : S.prev?.board?.cells) || [] : [];
   S.changed = new Set();
   b.cells.forEach((c, i) => { const p = prevCells[i]; if (prevCells.length && (!p || p.k !== c.k || p.t !== c.t)) S.changed.add(i); });
   const size = Math.max(10, Math.min(30, Math.floor(300 / cols)));

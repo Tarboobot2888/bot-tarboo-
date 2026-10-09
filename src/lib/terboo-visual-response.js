@@ -19,6 +19,13 @@ import { noteFailure } from "./terboo-failure-log.js";
 import { sendCard } from "./terboo-ui-kit.js";
 
 const VISUAL_MODES = Object.freeze(["html", "hybrid", "buttons", "media", "text"]);
+/**
+ * بادئات معرّفات بطاقات الألعاب. أي VisualResponse بأحدها **يُمنع** من حمل صورة.
+ * الحارس مقيَّد بالألعاب حتى لا يمس الملصقات والتنزيلات وبطاقات canvas العامة.
+ */
+const GAME_CARD_PREFIXES = Object.freeze(["arcade:", "quiz:", "game:", "miniapp:"]);
+/** هل هذا المعرّف بطاقة لعبة؟ */
+const isGameCard = (cardId) => GAME_CARD_PREFIXES.some((p) => String(cardId || "").startsWith(p));
 /** ألعاب قديمة رُحّلت إلى Hybrid (أزرار فوق منطقها الخاص) */
 const HYBRID_LEGACY = new Set(["مستذئب", "دنجن", "نينجا", "mct"]);
 const MEDIA_CATEGORIES = new Set(["download", "downloader", "sticker", "canvas", "maker", "image", "random"]);
@@ -121,6 +128,9 @@ function validateVisualResponse(vr) {
     const check = validateTemplate(vr.html);
     if (!check.ok) errors.push(...check.errors.map((e) => `html:${e}`));
   }
+  // سياسة §6: لا صورة في أي مسار لعبة — لا لوحة، ولا معاينة، ولا صورة احتياطية.
+  // الرفض هنا يمنع أي إضافة مستقبلية من إعادة مسار الصور من الباب الخلفي.
+  if (vr.image && isGameCard(vr.cardId)) errors.push("game-image-forbidden");
   if (vr.image && !Buffer.isBuffer(vr.image.buffer)) errors.push("image-buffer");
   for (const l of vr.links || []) if (!l?.text || !/^https?:\/\//.test(String(l.url || ""))) errors.push("dead-link");
   return { ok: errors.length === 0, errors };
@@ -151,7 +161,8 @@ async function deliverVisual(sock, m, vr) {
     lang: vr.lang,
     text: vr.text,
     footer: vr.footer || "",
-    image: vr.image || null,
+    // طبقة ثانية: حتى لو مرّ كائن غير مدقَّق، بطاقة اللعبة لا تحمل صورة أبداً
+    image: isGameCard(vr.cardId) ? null : vr.image || null,
     buttons: vr.actions || [],
     links: vr.links || [],
     select: vr.select || null,
@@ -161,4 +172,4 @@ async function deliverVisual(sock, m, vr) {
   return { ...sent, html };
 }
 
-export { HYBRID_LEGACY, VISUAL_MODES, deliverVisual, validateVisualResponse, visualMatrix, visualMetadata };
+export { GAME_CARD_PREFIXES, HYBRID_LEGACY, VISUAL_MODES, deliverVisual, isGameCard, validateVisualResponse, visualMatrix, visualMetadata };

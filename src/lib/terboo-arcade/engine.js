@@ -669,7 +669,9 @@ function getView(roomId, { viewerJid = null, lang = "ar" } = {}) {
   };
   if (!room.game) return { ...base, board: null, actions: [] };
   const turn = contract.controller.currentActor(room.game);
-  const view = contract.renderer.view(room.game, { viewerSeat, lang, players: base.players, turn });
+  // sessionId/roomId في سياق العرض: تسمح للعقد بربط مرجع أصل موقّع بالجلسة
+  // (مثال: صورة سؤال تُعرض داخل Mini App) بلا تمرير العنوان الأصلي للعميل.
+  const view = contract.renderer.view(room.game, { viewerSeat, lang, players: base.players, turn, sessionId: room.sessionId, roomId: room.roomId });
   // من يتصرف الآن: صاحب الدور، أو (لعبة متزامنة) المشاهد نفسه إن كان لاعباً، أو المقعد الأول لعرض عام
   const hasTurn = turn !== null && turn !== undefined;
   const actingSeat = hasTurn ? turn : viewerSeat >= 0 ? viewerSeat : 0;

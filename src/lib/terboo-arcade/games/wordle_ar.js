@@ -83,7 +83,8 @@ export default {
       panels: [{ label: L(lang, "g.wordle_ar.tries"), value: `${state.guesses.length}/${TRIES}` }],
       status: over && !state.won ? L(lang, "g.wordle_ar.answer", { w: state.answer }) : "",
       board: { kind: "lines", lines: rows.map((row) => `${row.s.join("")}  ${[...row.g].join(" ")}`).concat(Array(TRIES - rows.length).fill("⬜⬜⬜⬜⬜")) },
-      image: { kind: "grid", cols: LEN, cells },
+      // شبكة تلوين (View Model منظَّم) — ليست صورة. الاسم السابق `image` كان مضلّلاً.
+      visualBoard: { kind: "grid", cols: LEN, cells },
     };
   },
 };

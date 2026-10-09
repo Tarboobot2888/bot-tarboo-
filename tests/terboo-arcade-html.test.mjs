@@ -28,7 +28,15 @@ const A = "201000000201@s.whatsapp.net";
 // 1) الهروب: اسم لاعب خبيث لا يصبح HTML
 const evil = "<img src=x onerror=alert(1)><script>alert(2)</script>";
 const html = H.buildGameHtml({ title: evil, icon: "🎮", state: "PLAYING", turn: 0, players: [{ name: evil }], board: { kind: "grid", cols: 1, cells: [{ t: evil }] }, panels: [{ label: evil, value: evil }], actions: [{ id: "x", label: evil }] }, { lang: "en" });
-assert.doesNotMatch(html, /<img|<script|<[^>]*\son\w+=/i, "كل نص مُهرَّب (لا وسوم ولا سمات أحداث)");
+// الفحص بنيوي: النص المُهرَّب داخل قيمة سمة يحتوي " onerror=" حرفياً، وهو غير خطير.
+// الخطر الحقيقي هو وسم أو سمة حدث **فعلية**، فنفحص أسماء الوسوم والسمات لا المستند كنص.
+const tagsIn = (doc) => [...String(doc).matchAll(/<\/?([a-zA-Z][\w:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)\/?>/g)]
+  .map((m) => ({ tag: m[1].toLowerCase(), attrs: [...String(m[2]).matchAll(/([a-zA-Z_:][\w:.-]*)\s*(?:=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?/g)].map((a) => a[1].toLowerCase()) }));
+const emitted = tagsIn(html);
+assert.ok(emitted.length > 0, "القالب يحتوي وسوماً");
+assert.ok(!emitted.some((t) => ["img", "script", "iframe", "form", "input"].includes(t.tag)), "لا وسم خطير فعلي من نص المستخدم");
+assert.ok(!emitted.some((t) => t.attrs.some((a) => /^on[a-z]+$/.test(a))), "لا سمة حدث فعلية");
+assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/, "نص المستخدم مُهرَّب حرفياً وليس منفَّذاً");
 assert.equal(H.validateTemplate(html).ok, true, "مخرجات البنّاء تمر من المدقق");
 
 // 2) المدقق يرفض
