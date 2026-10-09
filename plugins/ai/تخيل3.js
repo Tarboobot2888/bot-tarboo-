@@ -18,8 +18,15 @@ const pluginConfig = {
     isEnabled: true
 };
 
-const API_URL = 'https://api.cloudflare.com/client/v4/accounts/REDACTED_SEE_CLOUDFLARE_ACCOUNT_ID_ENV/ai/run/@cf/black-forest-labs/flux-1-schnell';
-const TOKEN = 'REDACTED_SEE_CLOUDFLARE_AI_TOKEN_ENV';
+// بيانات اعتماد Cloudflare Workers AI — من البيئة فقط.
+// كانت مكتوبة داخل الملف (توكن + معرّف حساب) فحجبت دفع المستودع عبر
+// GitHub Push Protection. التوكن المكشوف يجب اعتباره محروقاً وتدويره.
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+const TOKEN = process.env.CLOUDFLARE_AI_TOKEN || '';
+const API_URL = ACCOUNT_ID
+    ? `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell`
+    : '';
+const MISSING_KEYS = '⚠️ *الأمر غير مهيّأ*\n\n> اضبط `CLOUDFLARE_ACCOUNT_ID` و`CLOUDFLARE_AI_TOKEN` في البيئة.';
 
 const STYLES = {
     'realistic': {
@@ -174,6 +181,8 @@ async function handler(m, { sock, text, prefix }) {
 
     await m.react('🎨');
     await m.reply(`⏳ *${style.label}* - جاري توليد الصورة...\n📝 ${promptText}`);
+
+    if (!TOKEN || !API_URL) return m.reply(MISSING_KEYS);
 
     try {
         const finalPrompt = style.prompt.replace('{prompt}', promptText);
