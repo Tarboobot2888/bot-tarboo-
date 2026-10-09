@@ -129,6 +129,9 @@ function registerConfigSecrets(cfg = {}, env = process.env) {
   values.push(cfg.telegram?.vps?.token);
   for (const server of Object.values(cfg.pterodactyl || {})) if (server && typeof server === "object") values.push(server.apikey, server.capikey);
   values.push(cfg.digitalocean?.token, cfg.geminiApiKey);
+  // قسم config.secrets الموحّد: كل مفاتيح المزوّدات في مكان واحد.
+  // تسجيلها هنا شرط — بدونه تظهر قيمها في السجلات ورسائل الأخطاء.
+  for (const value of Object.values(cfg.secrets || {})) values.push(value);
   for (const name of ["VIRTUALIZOR_API_KEY", "VIRTUALIZOR_API_PASSWORD", "VIRTUALIZOR_ADMIN_API_KEY", "VIRTUALIZOR_ADMIN_API_PASSWORD", "TERBOO_MASTER_KEY", "TERBOO_VPS_ENCRYPTION_KEY", "ANTHROPIC_API_KEY", "GROQ_API_KEY", "GOOGLE_API_KEY", "OPENAI_API_KEY", "NVIDIA_API_KEY", "TERBOO_TG_VPS_TOKEN"]) values.push(env[name]);
   let count = 0;
   for (const value of values) if (registerSecret(value)) count += 1;

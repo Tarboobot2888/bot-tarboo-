@@ -502,6 +502,50 @@ const config = {
   // ═══════════════════════════════════════════════
   // 🔑 مفاتيح API للخدمات الخارجية
   // ═══════════════════════════════════════════════
+  // ═══════════════════════════════════════════════
+  // 🔑 الأسرار — كل مفاتيح المزوّدات في مكان واحد
+  // ───────────────────────────────────────────────
+  // ضع القيم هنا وستُنشر تلقائياً إلى process.env عند تحميل الإعداد،
+  // فتعمل كل الوحدات التي تقرأ من البيئة بلا أي تعديل عليها.
+  //
+  // • متغيّر البيئة **يتغلّب** على القيمة هنا ⇒ النشر بـDocker/systemd يبقى كما هو.
+  // • كل قيمة هنا تُسجَّل في مُعتِّم الأسرار (terboo-secrets) فلا تظهر في سجل أو رسالة خطأ.
+  // • هذا الملف لا يُرفع إلى مستودع عام (مُدرج في .gitignore).
+  // ═══════════════════════════════════════════════
+  secrets: {
+    // ── Cloudflare Workers AI (أمر .تخيل3) ──
+    CLOUDFLARE_ACCOUNT_ID: "", // معرّف حساب Cloudflare
+    CLOUDFLARE_AI_TOKEN: "", // توكن Workers AI
+
+    // ── مزوّدات الذكاء الاصطناعي ──
+    ANTHROPIC_API_KEY: "", // Claude
+    ANTHROPIC_AUTH_TOKEN: "", // بديل لمفتاح Claude عند استخدام بوابة
+    NVIDIA_API_KEY: "", // NVIDIA NIM
+    NVIDIA_API_KEYS: "", // عدة مفاتيح NVIDIA مفصولة بفواصل (تدوير)
+    MANUS_API_KEY: "", // Manus
+    GROQ_API_KEY: "", // Groq
+    OPENAI_API_KEY: "", // OpenAI
+    GOOGLE_API_KEY: "", // Google AI
+
+    // ── خدمات مساعدة ──
+    ASSEMBLYAI_KEY: "", // تحويل الصوت إلى نص
+    FIXCODE_API_KEY: "", // أمر gpt55
+    EMOJI_KITCHEN_API_KEY: "", // دمج الإيموجي
+    TIKTOK_SEARCH_API_KEY: "", // بحث تيك توك
+    SPOTIFY_DL_API_TOKEN: "", // تنزيل سبوتيفاي
+
+    // ── البنية التحتية ──
+    TERBOO_MASTER_KEY: "", // المفتاح الرئيسي لخزنة الأسرار (أو اتركه لملف data/secure/master.key)
+    TERBOO_VPS_ENCRYPTION_KEY: "", // تشفير بيانات VPS
+    VIRTUALIZOR_API_KEY: "", // Virtualizor — مستخدم نهائي
+    VIRTUALIZOR_API_PASSWORD: "",
+    VIRTUALIZOR_ADMIN_API_KEY: "", // Virtualizor — مدير
+    VIRTUALIZOR_ADMIN_API_PASSWORD: "",
+    TERBOO_TG_VPS_TOKEN: "", // بوت تيليغرام لإدارة VPS (@BotFather)
+    TERBOO_WEBHOOK_TOKEN: "", // توكن الويبهوك
+    MAROBOT_WEBHOOK_TOKEN: "", // توكن ويبهوك قديم (توافق)
+  },
+
   APIkey: {
     lolhuman: "", // LolHuman API
     neoxr: "", // NeoXR API
@@ -702,6 +746,13 @@ function getOwnerName(number) {
 /** جلب كل إعدادات config */
 function getConfig() {
   return config;
+}
+
+// ── نشر الأسرار إلى البيئة ──
+// يُنفَّذ عند تحميل هذا الملف، وهو أول ما يستورده index.js، فتجد كل وحدة
+// قيمتها جاهزة في process.env وقت تحميلها. البيئة تتغلّب دائماً على الملف.
+for (const [name, value] of Object.entries(config.secrets || {})) {
+  if (value && !process.env[name]) process.env[name] = String(value);
 }
 
 // إضافة الدوال إلى كائن config لتكون متاحة عالمياً
