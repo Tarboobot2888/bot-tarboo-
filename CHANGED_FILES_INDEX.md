@@ -1,15 +1,15 @@
 # فهرس حزمة التغييرات — TERBOO MINI APPS
 
-> **ملف مولّد** مع الحزمة. يقارن `HEAD` بـcommit خط الأساس للشجرة المدمجة (`e07a1da`).
+> **ملف مولّد** مع الحزمة. يقارن `HEAD` بـcommit خط الأساس للشجرة المدمجة (`8c07b889`).
 > كل مسار هنا موضعه الأصلي داخل المشروع — فُكّ الحزمة فوق جذر `Bot-Terboo-V6-Arcade-Web/`.
 
 ## الحصيلة
 
 | الحالة | العدد |
 |---|---|
-| جديد | 17 |
-| معدّل | 44 |
-| **الإجمالي** | **61** |
+| جديد | 18 |
+| معدّل | 45 |
+| **الإجمالي** | **63** |
 
 **لم تُغيَّر:** `package.json` · `package-lock.json` (Baileys تبقى `@whiskeysockets/baileys@7.0.0-rc14`) · `index.js` · `src/handler.js` · أي بلوقن خارج فئة الألعاب.
 
@@ -17,6 +17,7 @@
 
 | الحالة | المسار | ما تغيّر |
 |---|---|---|
+| جديد | `CHANGED_FILES_INDEX.md` | توثيق |
 | جديد | `TERBOO_MINIAPP_FINAL_REPORT.md` | توثيق |
 | جديد | `TERBOO_MINIAPP_ROLLBACK.md` | توثيق |
 | معدّل | `config.example.js` | arcade.html.transport افتراضيه off + شرح |
@@ -26,6 +27,7 @@
 | جديد | `docs/TERBOO_MINIAPP_SECURITY.md` | توثيق |
 | جديد | `docs/TERBOO_MINIAPP_TEST_REPORT.md` | توثيق |
 | معدّل | `docs/terboo-visual-matrix.json` | مُعاد توليده (htmlEligible: 45) |
+| معدّل | `plugins/ai/تخيل3.js` | — |
 | معدّل | `plugins/game/أسئلة_ذكاء.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
 | معدّل | `plugins/game/ألغاز.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
 | معدّل | `plugins/game/خمن_الأغنية.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |

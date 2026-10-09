@@ -139,6 +139,32 @@ npm run test:syntax
 
 ---
 
+## 6.5 تحذير: الرجوع يُعيد بيانات اعتماد مكشوفة
+
+النسخة السابقة تحتوي توكن Cloudflare ومعرّف حساب **مكتوبين في المصدر**
+(`plugins/ai/تخيل3.js:21-22` + ثلاثة مستندات مولّدة). نُقلا إلى
+`CLOUDFLARE_AI_TOKEN` و`CLOUDFLARE_ACCOUNT_ID` في هذا العمل.
+
+- **الرجوع الكامل يُعيد التوكن إلى المصدر**، وسيُحجب دفع المستودع مرة أخرى
+  عبر GitHub Push Protection.
+- لذلك: ارجع عمّا تريد، لكن **أبقِ** هذا الملف الواحد من النسخة الجديدة:
+
+```bash
+git checkout <miniapps-sha> -- plugins/ai/تخيل3.js
+git checkout <miniapps-sha> -- docs/inventory/before/apis.json docs/inventory/after/apis.json docs/terboo-api-health-matrix.json
+```
+
+- وفي كل الأحوال: **التوكن محروق ويجب تدويره** من لوحة Cloudflare.
+  إزالته من الكود لا تُبطله، والرجوع لا يستعيد صلاحيته.
+
+لتشغيل `.تخيل3` بعد الترقية اضبط:
+```bash
+export CLOUDFLARE_ACCOUNT_ID="<معرّف الحساب>"
+export CLOUDFLARE_AI_TOKEN="<توكن جديد بعد التدوير>"
+```
+
+---
+
 ## 7. إن كان الخلل في طرف ثالث
 
 لم تُستبدل أي مكتبة في هذا العمل. تحديداً **لم** تُستبدل
