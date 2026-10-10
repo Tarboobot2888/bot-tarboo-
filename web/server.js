@@ -193,6 +193,33 @@ function createServer() {
         return r.fail(403, "cross-origin-denied");
       }
 
+      // لعبة مستقلة: /app/<id>?lang=ar — تُبنى في الذاكرة وتُخدم مباشرة.
+      // لا رمز لأنها بلا حالة خادمية ولا مكافآت: كل اللعب داخل الصفحة.
+      const standalone = pathname.match(/^\/app\/([a-z0-9_-]{1,32})\/?$/);
+      if (standalone) {
+        if (!["GET", "HEAD"].includes(req.method)) return r.fail(405, "method-not-allowed");
+        const { renderMiniApp } = await import("../src/lib/terboo-miniapp.js");
+        const lang = ["ar", "en", "es"].includes(url.searchParams.get("lang")) ? url.searchParams.get("lang") : "ar";
+        // nonce لكل استجابة: يسمح بسكربت الصفحة وحده ويبقي CSP صارمة
+        const nonce = crypto.randomBytes(16).toString("base64");
+        const built = renderMiniApp(standalone[1], { lang, nonce });
+        if (!built.ok) return r.fail(built.code === "unknown-mini-app" ? 404 : 500, built.code);
+        const body = Buffer.from(built.html, "utf8");
+        res.writeHead(200, {
+          ...SECURITY_HEADERS,
+          "Content-Security-Policy": [
+            "default-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'",
+            `script-src 'nonce-${nonce}'`, "style-src 'unsafe-inline'", "img-src data:", "connect-src 'none'",
+          ].join("; "),
+          "Content-Type": "text/html; charset=utf-8",
+          "Content-Length": body.length,
+          "Cache-Control": "no-store",
+          "X-Request-Id": requestId,
+        });
+        res.end(req.method === "HEAD" ? undefined : body);
+        return undefined;
+      }
+
       // كتالوج Mini Apps: صفحة عامة (بلا رمز) تقرأ /api/v1/arcade/catalog
       if (pathname === "/arcade" || pathname === "/arcade/") {
         return serveStatic({ method: req.method, url: "/arcade.html" }, res, { root: path.join(HERE, "public"), securityHeaders: SECURITY_HEADERS, requestId });

@@ -23,7 +23,7 @@ const I18N = {
     fAI: "ضد الكمبيوتر", fSolo: "فردي", fParty: "مع الأصدقاء", fQuick: "سريعة (≤60ث)",
     count: "{n} لعبة", none: "لا توجد لعبة بهذه المواصفات", clear: "امسح الفلاتر",
     players: "اللاعبون", round: "مدة الجولة", mode: "النمط", cat: "الفئة", cmd: "الأمر في واتساب",
-    sec: "{n} ثانية", close: "إغلاق", howTo: "كيف ألعب؟",
+    sec: "{n} ثانية", playNow: "▶ العب الآن", close: "إغلاق", howTo: "كيف ألعب؟",
     note: "تُلعب كل لعبة داخل Mini App تفاعلية. أرسل أمر اللعبة للبوت على واتساب فيصلك رابط لعب شخصي — كل الحركات والنتائج تُحسب على الخادم.",
     modeSolo: "فردي", modePvp: "لاعبان", modeParty: "جماعي", modeCoop: "تعاوني",
     aiNote: "خصم آلي بمستويات", soloNote: "تعمل بلاعب واحد", partyNote: "تدعم المجموعات" },
@@ -32,7 +32,7 @@ const I18N = {
     fAI: "vs Computer", fSolo: "Solo", fParty: "With friends", fQuick: "Quick (≤60s)",
     count: "{n} games", none: "No game matches these filters", clear: "Clear filters",
     players: "Players", round: "Round time", mode: "Mode", cat: "Category", cmd: "WhatsApp command",
-    sec: "{n}s", close: "Close", howTo: "How do I play?",
+    sec: "{n}s", playNow: "▶ Play now", close: "Close", howTo: "How do I play?",
     note: "Every game runs inside an interactive Mini App. Send the game command to the bot on WhatsApp and you get a personal play link — all moves and results are computed on the server.",
     modeSolo: "Solo", modePvp: "Two players", modeParty: "Party", modeCoop: "Co-op",
     aiNote: "AI opponent with levels", soloNote: "Playable alone", partyNote: "Group supported" },
@@ -41,7 +41,7 @@ const I18N = {
     fAI: "vs Computadora", fSolo: "Solo", fParty: "Con amigos", fQuick: "Rápida (≤60s)",
     count: "{n} juegos", none: "Ningún juego coincide", clear: "Limpiar filtros",
     players: "Jugadores", round: "Duración", mode: "Modo", cat: "Categoría", cmd: "Comando de WhatsApp",
-    sec: "{n}s", close: "Cerrar", howTo: "¿Cómo juego?",
+    sec: "{n}s", playNow: "▶ Jugar", close: "Cerrar", howTo: "¿Cómo juego?",
     note: "Cada juego corre dentro de una Mini App interactiva. Envía el comando al bot en WhatsApp y recibirás un enlace personal — los movimientos y resultados se calculan en el servidor.",
     modeSolo: "Solo", modePvp: "Dos jugadores", modeParty: "Grupal", modeCoop: "Cooperativo",
     aiNote: "Oponente con niveles", soloNote: "Se juega solo", partyNote: "Compatible con grupos" },
@@ -136,6 +136,10 @@ function openSheet(g) {
         row(tr("round"), tr("sec", { n: g.roundSeconds }))),
       el("code", { class: "sheet-cmd" }, `.${g.command}`),
       el("div", { class: "sheet-actions" },
+        // لعبة مستقلة: تُفتح من الكتالوج مباشرة (بلا حالة خادمية ولا رمز)
+        g.standalone && g.playUrl
+          ? el("a", { class: "btn", href: g.playUrl, rel: "noopener" }, tr("playNow"))
+          : null,
         el("button", { class: "btn", type: "button", onclick: () => copyCmd(g) }, `📋 .${g.command}`),
         el("button", { class: "btn ghost", type: "button", onclick: close }, tr("close"))),
       el("div", { class: "cat-note" }, tr("note"))));

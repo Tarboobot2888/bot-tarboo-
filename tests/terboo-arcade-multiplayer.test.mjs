@@ -41,6 +41,12 @@ const { messageHandler } = await import("../src/handler.js");
 const engine = await import("../src/lib/terboo-arcade/engine.js");
 for (const jid of [A, B, C, D, E]) db.setUser(jid, { language: "ar", name: jid.slice(-2) });
 for (const name of ["اكس_او", "اركيد", "ثعبان_وسلم", "حجرة_ورقة_مقص", "ساحة_المعلومات"]) if (getPlugin(name)) getPlugin(name).config.cooldown = 0;
+// plugins/game/اركيد.js يشغّل مكنسة انتهاء الغرف عند تحميله. حلقة «ثعبان وسلم»
+// أدناه ترسل ~1500 رمية عبر معالج الرسائل الكامل وتستغرق عشرات الثواني، فكانت
+// المكنسة تُنهي الغرفة (EXPIRED) أو تُنهي مهلة سؤال المسابقة في منتصف الاختبار
+// ⇒ فشل متقطّع لا علاقة له بالقواعد المُختبَرة. نوقفها: الاختبار يفحص قواعد
+// اللعب الجماعي، ومهلات الانتهاء لها اختبارها في terboo-arcade-engine.
+engine.stopSweeper();
 
 const sent = [];
 const relays = [];

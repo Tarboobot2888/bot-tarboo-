@@ -20,6 +20,7 @@ import * as E from "../../src/lib/terboo-arcade/engine.js";
 import * as W from "../../src/lib/terboo-arcade/web.js";
 import { fetchAsset } from "../../src/lib/terboo-arcade/assets.js";
 import { L } from "../../src/lib/terboo-arcade/locale.js";
+import { miniApps } from "../../src/lib/terboo-miniapp.js";
 
 const LANGS = new Set(["ar", "en", "es"]);
 const langOf = (url, body) => {
@@ -58,13 +59,41 @@ function catalog(lang) {
   }));
 }
 
+/**
+ * الألعاب المستقلة (Mini Apps بلا حالة خادمية): تُعرض في نفس الكتالوج مع
+ * `standalone: true` ورابط لعب مباشر، لأنها في سجل MINI_APPS بقواعد كاملة
+ * ومسار تشغيل مكتمل. لا تمر بمحرك الأركيد لأنها لا تمنح مكافآت ولا ترتيباً.
+ */
+function standaloneCatalog(lang) {
+  return miniApps().map((a) => ({
+    id: a.id,
+    icon: a.icon,
+    name: a.name[lang] || a.name.ar,
+    description: a.blurb[lang] || a.blurb.ar,
+    category: a.category,
+    mode: "solo",
+    uiMode: "html",
+    supportsAI: a.id === "xo",
+    supportsSolo: true,
+    supportsGroup: false,
+    players: { min: 1, max: 1 },
+    roundSeconds: 0,
+    command: a.id === "sonic" ? "سونك" : "اكس_او_مصغر",
+    aliases: [a.id],
+    standalone: true,
+    playUrl: `/app/${a.id}?lang=${lang}`,
+  }));
+}
+
 async function handleArcade(ctx) {
   const { r, url, method, pathname, body } = ctx;
   try {
     await loadArcade();
     const lang = langOf(url, body);
 
-    if (method === "GET" && pathname === "/api/v1/arcade/catalog") return r.ok({ games: catalog(lang) });
+    if (method === "GET" && pathname === "/api/v1/arcade/catalog") {
+      return r.ok({ games: [...standaloneCatalog(lang), ...catalog(lang)] });
+    }
 
     if (method === "POST" && pathname === "/api/v1/arcade/new") {
       const raw = ctx.cookies.terboo_sid;

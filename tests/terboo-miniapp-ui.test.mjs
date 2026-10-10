@@ -214,13 +214,16 @@ async function layout(page) {
 
 // ─────────────── 6) الكتالوج ───────────────
 {
+  // الكتالوج يعرض عقود الأركيد + الألعاب المستقلة
+  const { miniApps } = await import("../src/lib/terboo-miniapp.js");
+  const expectedCards = arcadeContracts().length + miniApps().length;
   for (const width of [320, 412, 820]) {
     const { ctx, page, errors, external } = await open(`${BASE}/arcade?lang=ar`, { width });
     await page.waitForSelector(".gcard", { timeout: 15000 });
     const L = await layout(page);
     const cards = await page.locator(".gcard").count();
     const shown = Number((await page.locator(".cat-count").first().textContent() || "").replace(/\D+/g, ""));
-    if (cards !== arcadeContracts().length) findings.push(`الكتالوج@${width}: ${cards} بطاقة بدل ${arcadeContracts().length}`);
+    if (cards !== expectedCards) findings.push(`الكتالوج@${width}: ${cards} بطاقة بدل ${expectedCards}`);
     if (shown !== cards) findings.push(`الكتالوج@${width}: العدد المعروض ${shown} لا يطابق البطاقات ${cards}`);
     if (L.scrollW > L.clientW + 1) findings.push(`الكتالوج@${width}: overflow أفقي`);
     if (L.imgs.length) findings.push(`الكتالوج@${width}: وُجد <img> (الكتالوج بلا صور)`);
@@ -257,5 +260,5 @@ await browser.close();
 await ctl.stopSite?.({}).catch(() => {});
 
 assert.deepEqual(findings, [], `مخالفات واجهة Mini App:\n - ${findings.join("\n - ")}`);
-console.log(`✅ terboo-miniapp-ui: Chromium ${(await (async () => "141")()) && "حقيقي"} · صفحة لعب على ${WIDTHS.join("/")}px بلا overflow · RTL+LTR · 0 أخطاء console · 0 موارد خارجية · نقرة لمس ⇒ حالة الخادم · حقل قرار مرفوض · أصل بصري same-origin موقّع · كتالوج ${arcadeContracts().length} لعبة ببحث وفلاتر`);
+console.log(`✅ terboo-miniapp-ui: Chromium ${(await (async () => "141")()) && "حقيقي"} · صفحة لعب على ${WIDTHS.join("/")}px بلا overflow · RTL+LTR · 0 أخطاء console · 0 موارد خارجية · نقرة لمس ⇒ حالة الخادم · حقل قرار مرفوض · أصل بصري same-origin موقّع · كتالوج ${arcadeContracts().length}+${(await import("../src/lib/terboo-miniapp.js")).miniApps().length} لعبة ببحث وفلاتر`);
 process.exit(0);

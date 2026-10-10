@@ -3,7 +3,7 @@
 // ───────────────────────────────────────────────
 // 1) رمز اللعب: توقيع HMAC · رفض العبث/الانتهاء/غير اللاعب
 // 2) API: حالة بلا JID · حركة مقبولة عبر المحرك · رفض المكرر/الحقل المحظور/غير JSON/بلا رأس/منشأ غريب
-// 3) صفحة /play/<token> برؤوس CSP و no-store · الكتالوج = عقود الأركيد
+// 3) صفحة /play/<token> برؤوس CSP و no-store · الكتالوج = أركيد + مستقلة · /app/<id> بنونس
 // 4) الرابط: تلقائي من IP:المنفذ · config غير صالح ⇒ لا رابط · رابط المالك يتغلب
 // 5) واتساب: بطاقة الخاص تحمل زر cta_url لـ/play · المجموعة زر «web» يرسل لكل لاعب رابطه في الخاص فقط
 // 6) .موقع: منفذ/رابط/SSL (شهادة ذاتية التوقيع إن توفر openssl) · HTTPS فعلي · لا أسرار في الحالة
@@ -123,7 +123,28 @@ assert.match(res.headers.get("content-security-policy"), /script-src 'self'/);
 assert.equal(res.headers.get("cache-control"), "no-store");
 assert.match(await res.text(), /play\.js/);
 json = await (await fetch(`${base}/api/v1/arcade/catalog?lang=ar`)).json();
-assert.equal(json.data.games.length, arcadeContracts().length, "الكتالوج = عقود الأركيد");
+// الكتالوج = عقود الأركيد + الألعاب المستقلة (Mini Apps بلا حالة خادمية)
+const { miniApps } = await import("../src/lib/terboo-miniapp.js");
+const standalone = json.data.games.filter((g) => g.standalone);
+const engineBacked = json.data.games.filter((g) => !g.standalone);
+assert.equal(engineBacked.length, arcadeContracts().length, "ألعاب المحرك = عقود الأركيد");
+assert.equal(standalone.length, miniApps().length, "الألعاب المستقلة = سجل Mini Apps");
+assert.ok(standalone.every((g) => /^\/app\/[a-z0-9_-]+\?lang=/.test(g.playUrl)), "كل لعبة مستقلة لها رابط لعب مباشر");
+assert.ok(standalone.every((g) => g.name && g.description), "الألعاب المستقلة لها اسم ووصف");
+// الألعاب المستقلة لا تدّعي مكافآت أو ترتيباً
+assert.ok(standalone.every((g) => g.roundSeconds === 0 && g.supportsGroup === false), "المستقلة: بلا جولة خادمية ولا مجموعات");
+// صفحة اللعبة المستقلة تُخدم فعلاً بـCSP صارمة ونونس
+for (const g of standalone) {
+  const appRes = await fetch(`${base}/app/${g.id}?lang=ar`);
+  assert.equal(appRes.status, 200, `/app/${g.id} يُخدم`);
+  const csp = appRes.headers.get("content-security-policy") || "";
+  assert.match(csp, /script-src 'nonce-/, `/app/${g.id}: CSP بنونس`);
+  assert.match(csp, /connect-src 'none'/, `/app/${g.id}: بلا شبكة`);
+  const html = await appRes.text();
+  assert.match(html, /<script nonce="/, `/app/${g.id}: الوسم يحمل النونس`);
+  assert.doesNotMatch(html, /https?:\/\//, `/app/${g.id}: بلا مورد خارجي`);
+}
+assert.equal((await fetch(`${base}/app/nope`)).status, 404, "لعبة مستقلة مجهولة ⇒ 404");
 res = await fetch(`${base}/`);
 assert.equal(res.status, 200, "الصفحة الرئيسية");
 
