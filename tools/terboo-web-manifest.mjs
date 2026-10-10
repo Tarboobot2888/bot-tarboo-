@@ -18,10 +18,34 @@ const ROOT = process.cwd();
 const OUT = path.join(ROOT, "docs", "v6", "web-files-sha256.json");
 const CHECK = process.argv.includes("--check");
 
-const files = execFileSync("git", ["ls-files", "-z", "web/"], { cwd: ROOT })
-  .toString("utf8").split("\0").filter(Boolean).sort();
+/**
+ * قائمة ملفات web/.
+ * git هو المصدر عند توفره (يحترم .gitignore)، وإلا نمشي على المجلد — فالحارس
+ * يعمل أيضاً داخل حزمة مفكوكة بلا مستودع، وهي الحالة التي يشغّله فيها المالك.
+ */
+function webFiles() {
+  try {
+    const tracked = execFileSync("git", ["ls-files", "-z", "web/"], { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
+      .toString("utf8").split("\0").filter(Boolean);
+    if (tracked.length) return tracked.sort();
+  } catch { /* لا مستودع: نمشي على المجلد */ }
+  const out = [];
+  const walk = (rel) => {
+    const abs = path.join(ROOT, rel);
+    if (!fs.existsSync(abs)) return;
+    for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
+      const next = path.posix.join(rel, entry.name);
+      if (entry.isDirectory()) walk(next);
+      else if (entry.isFile()) out.push(next);
+    }
+  };
+  walk("web");
+  return out.sort();
+}
+
+const files = webFiles();
 if (!files.length) {
-  console.error("❌ لا ملفات متتبَّعة تحت web/ — البصمة بلا معنى");
+  console.error("❌ لا ملفات تحت web/ — البصمة بلا معنى");
   process.exit(2);
 }
 

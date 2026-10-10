@@ -23,8 +23,28 @@ const MANIFEST = path.join(ROOT, "docs", "v6", "web-files-sha256.json");
 // ── 1. البصمة مسجّلة وتغطي كل ملف متتبَّع تحت web/ ───────────────────────
 assert.ok(fs.existsSync(MANIFEST), "بصمة ملفات الموقع غير مسجّلة");
 const saved = JSON.parse(fs.readFileSync(MANIFEST, "utf8")).sha256;
-const tracked = execFileSync("git", ["ls-files", "-z", "web/"], { cwd: ROOT })
-  .toString("utf8").split("\0").filter(Boolean).sort();
+
+/** نفس منطق الأداة: git عند توفره، وإلا المشي على المجلد (حزمة مفكوكة) */
+function webFiles() {
+  try {
+    const out = execFileSync("git", ["ls-files", "-z", "web/"], { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
+      .toString("utf8").split("\0").filter(Boolean);
+    if (out.length) return out.sort();
+  } catch { /* لا مستودع */ }
+  const found = [];
+  const walk = (rel) => {
+    const abs = path.join(ROOT, rel);
+    if (!fs.existsSync(abs)) return;
+    for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
+      const next = path.posix.join(rel, entry.name);
+      if (entry.isDirectory()) walk(next);
+      else if (entry.isFile()) found.push(next);
+    }
+  };
+  walk("web");
+  return found.sort();
+}
+const tracked = webFiles();
 assert.ok(tracked.length >= 10, `عدد ملفات web/ غير منطقي: ${tracked.length}`);
 assert.deepEqual(Object.keys(saved).sort(), tracked, "البصمة لا تغطي نفس مجموعة الملفات");
 
