@@ -7,14 +7,15 @@
 
 | الحالة | العدد |
 |---|---|
+| معدّل | 17 |
 | جديد | 22 |
-| معدّل | 16 |
-| **المشحون** | **38** |
+| **المشحون** | **39** |
 
 ## الملفات
 
 | الحالة | المسار |
 |---|---|
+| معدّل | `CHANGED_FILES_INDEX.md` |
 | معدّل | `docs/arcade/performance.json` |
 | معدّل | `docs/terboo-command-ui-matrix.json` |
 | معدّل | `docs/terboo-visual-matrix.json` |
