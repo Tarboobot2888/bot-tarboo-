@@ -1,106 +1,138 @@
-# فهرس حزمة التغييرات — TERBOO MINI APPS
+# فهرس حزمة التغييرات — Bot-Terboo-V6-Native-MiniApps-Changes
 
-> **ملف مولّد** مع الحزمة. يقارن `HEAD` بـcommit خط الأساس للشجرة المدمجة (`8c07b889`).
-> كل مسار هنا موضعه الأصلي داخل المشروع — فُكّ الحزمة فوق جذر `Bot-Terboo-V6-Arcade-Web/`.
+> **ملف مولّد** بـ`node tools/terboo-package-changes.mjs`. يقارن شجرة العمل بخط الأساس `8c07b889`.
+> كل مسار هنا موضعه الأصلي داخل المشروع — فُكّ الحزمة فوق جذر المشروع.
 
 ## الحصيلة
 
 | الحالة | العدد |
 |---|---|
-| جديد | 18 |
-| معدّل | 48 |
-| **الإجمالي** | **66** |
-
-**لم تُغيَّر:** `package.json` · `package-lock.json` (Baileys تبقى `@whiskeysockets/baileys@7.0.0-rc14`) · `index.js` · `src/handler.js` · أي بلوقن خارج فئة الألعاب.
+| معدّل | 59 |
+| جديد | 41 |
+| **المشحون** | **100** |
+| محذوف (لا يُشحن) | 17 |
 
 ## الملفات
 
-| الحالة | المسار | ما تغيّر |
-|---|---|---|
-| معدّل | `.gitignore` | — |
-| جديد | `CHANGED_FILES_INDEX.md` | توثيق |
-| جديد | `TERBOO_MINIAPP_FINAL_REPORT.md` | توثيق |
-| جديد | `TERBOO_MINIAPP_ROLLBACK.md` | توثيق |
-| معدّل | `config.example.js` | arcade.html.transport افتراضيه off + شرح |
-| جديد | `docs/TERBOO_MINIAPP_BASELINE_AUDIT.md` | توثيق |
-| جديد | `docs/TERBOO_MINIAPP_GAME_MATRIX.md` | توثيق |
-| جديد | `docs/TERBOO_MINIAPP_MIGRATION.md` | توثيق |
-| جديد | `docs/TERBOO_MINIAPP_SECURITY.md` | توثيق |
-| جديد | `docs/TERBOO_MINIAPP_TEST_REPORT.md` | توثيق |
-| معدّل | `docs/arcade/performance.json` | توثيق |
-| معدّل | `docs/terboo-visual-matrix.json` | مُعاد توليده (htmlEligible: 45) |
-| معدّل | `plugins/ai/تخيل3.js` | — |
-| معدّل | `plugins/game/أسئلة_ذكاء.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/ألغاز.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الأغنية.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الحيوان.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الدراما.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الدولة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الشخصية.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الصورة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الطعام.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_العضوة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_العلم.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_العنصر.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الفيلم.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الكلمات.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_الكلمة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_المثل.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/خمن_المهنة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/رتب_الكلمة.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/فوازير.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/كلمة_عشوائية.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/لغز.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| معدّل | `plugins/game/من_أنا.js` | لعبة أسئلة: صارت quickCommand('q_*') على المحرك الموحّد — نفس الأمر والمرادفات |
-| جديد | `src/lib/terboo-arcade/assets.js` | جديد — وكيل أصول موقّع same-origin لصور الأسئلة داخل Mini App (قائمة مضيفات مغلقة · لا SVG) |
-| معدّل | `src/lib/terboo-arcade/commands.js` | رسالة صريحة للعبة لم تُرحَّل (لا سقوط صامت) |
-| معدّل | `src/lib/terboo-arcade/contract.js` | description على العقد · assets.image ⇒ assets.visualSourceField |
-| معدّل | `src/lib/terboo-arcade/engine.js` | sessionId/roomId في سياق العرض (لربط مرجع أصل موقّع بالجلسة) |
-| معدّل | `src/lib/terboo-arcade/games/wordle_ar.js` | view.image ⇒ view.visualBoard (كان اسماً مضلّلاً) |
-| معدّل | `src/lib/terboo-arcade/index.js` | ترحيل ألعاب الأسئلة + legacyQuizReport() |
-| جديد | `src/lib/terboo-arcade/legacy-quiz.js` | جديد — يحوّل كل games.register إلى عقد defineGame فوق محرك الأسئلة (22/22) |
-| معدّل | `src/lib/terboo-arcade/locale.js` | مفتاح ui.err.unavailable بثلاث لغات |
-| معدّل | `src/lib/terboo-arcade/web.js` | رمز اللعب صار بصمة HMAC بلا رقم هاتف/JID |
-| معدّل | `src/lib/terboo-game-design-system.js` | حُذف .ta-asset-frame/.ta-asset-image |
-| معدّل | `src/lib/terboo-game-ulartangga.js` | حُذف مولّد صورة اللوحة على canvas وPLAYER_IMAGES وDICE_STICKERS؛ بقيت الطوبولوجيا |
-| معدّل | `src/lib/terboo-games.js` | 429⇒78 سطراً: حُذف محرك الجلسات القديم وsendQuizCard وinlineQuizImage. صار سجلاً فقط، ويسجّل العقد الموحّد عند register() |
-| معدّل | `src/lib/terboo-html-game.js` | مدقّق بنيوي بدل regex (أصلح سقوط كل بطاقات الألعاب) · حذف inlineImageDataUrl و<img> · نقل HTML مطفأ افتراضياً |
-| معدّل | `src/lib/terboo-secrets.js` | — |
-| معدّل | `src/lib/terboo-visual-response.js` | حارس: بطاقة لعبة لا تحمل صورة (رفض + تجريد). الصور غير المرتبطة بالألعاب كما هي |
-| معدّل | `tests/terboo-arcade-ai.test.mjs` | نية «العب خمن العلم» تحل إلى عقد قابل للعب |
-| معدّل | `tests/terboo-arcade-html.test.mjs` | إصلاح إنذار كاذب في regex + قلب تأكيدات سياسة الصور + الافتراضي off |
-| جديد | `tests/terboo-game-image-policy.test.mjs` | جديد — حارس «لا صور للألعاب»: ثابت + AST + دورة حياة 45 لعبة |
-| جديد | `tests/terboo-miniapp-security.test.mjs` | جديد — أمان الأصول وقناة الإجراءات والتزامن |
-| جديد | `tests/terboo-miniapp-ui.test.mjs` | جديد — متصفح حقيقي: تجاوب · RTL/LTR · نقرة ⇒ خادم · كتالوج |
-| معدّل | `tests/terboo-visual-response.test.mjs` | تحديث توقعات متقادمة بعد الترحيل |
-| جديد | `tools/terboo-miniapp-matrix.mjs` | جديد — مولّد مصفوفة الألعاب من السجل |
-| جديد | `tools/terboo-miniapp-test-report.mjs` | جديد — مولّد تقرير الاختبارات من نتائج التشغيل |
-| معدّل | `web/api/arcade.js` | مسار /asset/<token> · كتالوج أغنى (roundSeconds · command · aliases) · describe() |
-| معدّل | `web/public/app.js` | حُذفت عبارات «23 لعبة» المكتوبة يدوياً |
-| جديد | `web/public/arcade.css` | جديد — تنسيق الكتالوج (يرث tokens من play.css) |
-| جديد | `web/public/arcade.html` | جديد — صفحة كتالوج Mini Apps |
-| جديد | `web/public/arcade.js` | جديد — عميل الكتالوج: بحث وفلاتر من /api/v1/arcade/catalog فقط |
-| معدّل | `web/public/play.css` | تنسيق الأصل · إصلاح overflow الأفقي عند 320px (.aurora) |
-| معدّل | `web/public/play.js` | عرض الأصل الموقّع · ثيم مشتق لكل لعبة أسئلة · visualBoard |
-| معدّل | `web/server.js` | مسار /arcade لصفحة الكتالوج |
+| الحالة | المسار |
+|---|---|
+| معدّل | `.gitignore` |
+| جديد | `CHANGED_FILES_INDEX.md` |
+| معدّل | `config.example.js` |
+| جديد (غير متتبَّع) | `config.js` |
+| معدّل | `docs/arcade/performance.json` |
+| جديد | `docs/TERBOO_MINIAPP_BASELINE_AUDIT.md` |
+| جديد | `docs/TERBOO_MINIAPP_GAME_MATRIX.md` |
+| جديد | `docs/TERBOO_MINIAPP_MIGRATION.md` |
+| جديد | `docs/TERBOO_MINIAPP_SECURITY.md` |
+| جديد | `docs/TERBOO_MINIAPP_TEST_REPORT.md` |
+| معدّل | `docs/terboo-command-ui-matrix.json` |
+| معدّل | `docs/terboo-visual-matrix.json` |
+| جديد | `docs/v6/native-miniapp-baseline-probe.json` |
+| جديد | `docs/v6/native-miniapp-test-results.json` |
+| معدّل | `plugins/ai/تخيل3.js` |
+| معدّل | `plugins/game/أسئلة_ذكاء.js` |
+| معدّل | `plugins/game/ألغاز.js` |
+| جديد | `plugins/game/اكس_او_مصغر.js` |
+| معدّل | `plugins/game/خمن_الأغنية.js` |
+| معدّل | `plugins/game/خمن_الحيوان.js` |
+| معدّل | `plugins/game/خمن_الدراما.js` |
+| معدّل | `plugins/game/خمن_الدولة.js` |
+| معدّل | `plugins/game/خمن_الشخصية.js` |
+| معدّل | `plugins/game/خمن_الصورة.js` |
+| معدّل | `plugins/game/خمن_الطعام.js` |
+| معدّل | `plugins/game/خمن_العضوة.js` |
+| معدّل | `plugins/game/خمن_العلم.js` |
+| معدّل | `plugins/game/خمن_العنصر.js` |
+| معدّل | `plugins/game/خمن_الفيلم.js` |
+| معدّل | `plugins/game/خمن_الكلمات.js` |
+| معدّل | `plugins/game/خمن_الكلمة.js` |
+| معدّل | `plugins/game/خمن_المثل.js` |
+| معدّل | `plugins/game/خمن_المهنة.js` |
+| معدّل | `plugins/game/رتب_الكلمة.js` |
+| جديد | `plugins/game/سونك.js` |
+| معدّل | `plugins/game/فوازير.js` |
+| معدّل | `plugins/game/كلمة_عشوائية.js` |
+| معدّل | `plugins/game/لغز.js` |
+| معدّل | `plugins/game/من_أنا.js` |
+| جديد | `src/lib/miniapps/_kit.js` |
+| جديد | `src/lib/miniapps/sonic-runner.js` |
+| جديد | `src/lib/miniapps/xo.js` |
+| جديد | `src/lib/terboo-arcade/assets.js` |
+| معدّل | `src/lib/terboo-arcade/commands.js` |
+| معدّل | `src/lib/terboo-arcade/contract.js` |
+| معدّل | `src/lib/terboo-arcade/engine.js` |
+| معدّل | `src/lib/terboo-arcade/games/wordle_ar.js` |
+| معدّل | `src/lib/terboo-arcade/index.js` |
+| جديد | `src/lib/terboo-arcade/legacy-quiz.js` |
+| معدّل | `src/lib/terboo-arcade/locale.js` |
+| معدّل | `src/lib/terboo-arcade/web.js` |
+| معدّل | `src/lib/terboo-game-design-system.js` |
+| معدّل | `src/lib/terboo-game-ulartangga.js` |
+| معدّل | `src/lib/terboo-games.js` |
+| معدّل | `src/lib/terboo-html-game.js` |
+| معدّل | `src/lib/terboo-i18n/catalog/en.json` |
+| معدّل | `src/lib/terboo-i18n/catalog/es.json` |
+| جديد | `src/lib/terboo-miniapp.js` |
+| معدّل | `src/lib/terboo-secrets.js` |
+| معدّل | `src/lib/terboo-visual-response.js` |
+| معدّل | `src/lib/terboo-wa-compat.js` |
+| جديد | `TERBOO_MINIAPP_FINAL_REPORT.md` |
+| جديد | `TERBOO_MINIAPP_ROLLBACK.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_AUDIT.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_GAME_MATRIX.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_ROLLBACK.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_SECURITY_REPORT.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_SETUP.md` |
+| جديد | `TERBOO_NATIVE_MINIAPP_TEST_REPORT.md` |
+| معدّل | `tests/terboo-arcade-ai.test.mjs` |
+| معدّل | `tests/terboo-arcade-html.test.mjs` |
+| معدّل | `tests/terboo-arcade-multiplayer.test.mjs` |
+| جديد | `tests/terboo-config-template.test.mjs` |
+| جديد | `tests/terboo-game-image-policy.test.mjs` |
+| جديد | `tests/terboo-miniapp-builders.test.mjs` |
+| جديد | `tests/terboo-miniapp-play.test.mjs` |
+| جديد | `tests/terboo-miniapp-security.test.mjs` |
+| جديد | `tests/terboo-miniapp-transport.test.mjs` |
+| جديد | `tests/terboo-miniapp-ui.test.mjs` |
+| معدّل | `tests/terboo-visual-response.test.mjs` |
+| معدّل | `tests/terboo-web-arcade.test.mjs` |
+| جديد | `tools/terboo-baseline-probe.mjs` |
+| معدّل | `tools/terboo-config-example.mjs` |
+| معدّل | `tools/terboo-game-audit.mjs` |
+| معدّل | `tools/terboo-i18n-extract.mjs` |
+| جديد | `tools/terboo-miniapp-matrix.mjs` |
+| جديد | `tools/terboo-miniapp-test-report.mjs` |
+| جديد | `tools/terboo-native-miniapp-matrix.mjs` |
+| جديد | `tools/terboo-native-miniapp-test-report.mjs` |
+| جديد | `tools/terboo-package-changes.mjs` |
+| معدّل | `tools/terboo-package.mjs` |
+| معدّل | `tools/terboo-run-tests.mjs` |
+| معدّل | `web/api/arcade.js` |
+| معدّل | `web/public/app.js` |
+| جديد | `web/public/arcade.css` |
+| جديد | `web/public/arcade.html` |
+| جديد | `web/public/arcade.js` |
+| معدّل | `web/public/play.css` |
+| معدّل | `web/public/play.js` |
+| معدّل | `web/server.js` |
 
-> **ليست في الحزمة ولا في المصدر الأصلي:** 17 ملفاً خلّفتها تشغيلات الاختبار
-> (`temp/terboo-tools/*` · `temp/terboo-backups/*` · `backup/ai-review/*.bak` · `tmp/fontconfig/*`)
-> دخلت commit خط الأساس سهواً ثم أُزيلت من التتبّع. لم تكن في `Part1`/`Part2`،
-> ولا تُحتسب تغييراً على المشروع.
+## محذوفة من الشجرة (لا تُشحن ولا تُحذف تلقائياً)
 
-
-## كيف تُطبَّق
-
-```bash
-# انسخ فوق مشروع مطابق لخط الأساس
-unzip Bot-Terboo-V6-MiniApps-Changed-Files.zip -d /tmp/miniapps-patch
-cp -a /tmp/miniapps-patch/Bot-Terboo-V6-Arcade-Web/. /path/to/Bot-Terboo-V6-Arcade-Web/
-cd /path/to/Bot-Terboo-V6-Arcade-Web && npm ci && npm start
-```
-
-هذه حزمة **تفاضلية** لا مشروعاً قابلاً للتشغيل وحده. للنسخة الكاملة استخدم
-`Bot-Terboo-V6-MiniApps-Full.zip`. الرجوع في `TERBOO_MINIAPP_ROLLBACK.md`.
-
-> `docs/arcade/performance.json` **ليس** في الحزمة: اختبار الأداء يعيد كتابته في كل تشغيل،
-> وفرقه كان طابعاً زمنياً وتذبذب توقيت فقط، فأُعيد إلى محتوى خط الأساس.
+- `backup/ai-review/review-target.js.1791569074079.bak`
+- `temp/terboo-backups/mv19w1dm-6r8c/tests/fixtures/agent-control-target.txt`
+- `temp/terboo-backups/mv19xc68-kd8r/tests/.terboo-agent-tmp/broken.js`
+- `temp/terboo-backups/mv19xcpg-odre/tests/.terboo-agent-tmp/broken.js`
+- `temp/terboo-backups/mv19xs07-9tes/tests/.terboo-tmp/sample.js`
+- `temp/terboo-backups/mv19xs2c-m45s/tests/.terboo-tmp/sample.js`
+- `temp/terboo-tools/1791569206507-6d30c1cc-53b2-411f-917b-c2afeef78bd8.jpg`
+- `temp/terboo-tools/1791569206653-532a8947-18bd-416f-92f9-61ed422252e7.jpg`
+- `temp/terboo-tools/1791569206778-d561fe15-ae2c-4e34-af20-7053b1031fdf.jpg`
+- `temp/terboo-tools/1791569206818-e81abcbc-12da-4f98-9f28-d573f4ba2e10.jpg`
+- `temp/terboo-tools/1791569206991-4be279c9-391e-4a7d-bedb-63650050fddd.jpg`
+- `temp/terboo-tools/1791569207032-c256236b-bdf2-4a7a-9236-59de3b9e8ae3.jpg`
+- `temp/terboo-tools/1791569207186-e9c8338c-046a-4d6b-b407-9b542fda78b2.jpg`
+- `temp/terboo-tools/1791569207444-1b975b56-a8d1-407b-b170-202a290f7f16.mp4`
+- `temp/terboo-tools/1791569207884-9700f2c8-4783-4e9b-bd13-76ab541221c6.mp4`
+- `temp/terboo-tools/1791569208002-40f7e3f9-b1c9-4b16-b8b4-4c9deec87ed2.zip`
+- `tmp/fontconfig/terboo-fonts.conf`
