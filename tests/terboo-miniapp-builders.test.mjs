@@ -7,18 +7,30 @@
 
 import assert from "node:assert/strict";
 
+const { auditWebViewHtml, WIRE_BUDGET } = await import("../src/lib/terboo-webview-budget.js");
+
 process.on("uncaughtException", (e) => { console.error("❌ فشل الاختبار:", e?.stack || e); process.exit(1); });
 process.on("unhandledRejection", (e) => { console.error("❌ فشل الاختبار:", e?.stack || e); process.exit(1); });
 
 const { buildSonicRunnerHtml } = await import("../src/lib/miniapps/sonic-runner.js");
 const { buildTicTacToeHtml } = await import("../src/lib/miniapps/xo.js");
+const { buildSnakeHtml } = await import("../src/lib/miniapps/snake.js");
+const { buildMemoryHtml } = await import("../src/lib/miniapps/memory.js");
+const { build2048Html } = await import("../src/lib/miniapps/n2048.js");
 const M = await import("../src/lib/terboo-miniapp.js");
 
 const LANGS = ["ar", "en", "es"];
 const BUILDERS = [
   { id: "sonic", build: buildSonicRunnerHtml, needs: ["game", "jump", "boost", "restart", "mute"], canvas: true },
   { id: "xo", build: buildTicTacToeHtml, needs: ["board", "turn", "again", "mute", "line"], canvas: false },
+  { id: "snake", build: buildSnakeHtml, needs: ["cv", "arena", "go", "u", "d", "l", "r", "score"], canvas: true },
+  { id: "memory", build: buildMemoryHtml, needs: ["grid", "again", "moves", "pairs", "won"], canvas: false },
+  { id: "n2048", build: build2048Html, needs: ["arena", "again", "score", "over", "c0", "c15"], canvas: false },
 ];
+
+// كل بنّاء مسجّل في السجل، وكل مُسجَّل له بنّاء: لا لعبة معلّقة بين الاثنين
+assert.deepEqual([...M.MINI_APPS.keys()].sort(), BUILDERS.map((b) => b.id).sort(),
+  "سجل MINI_APPS والبنّاؤون المُختبَرون لا يتطابقان");
 
 /** معرّفات العناصر في المستند */
 const idsOf = (html) => [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
@@ -60,8 +72,12 @@ for (const b of BUILDERS) {
     assert.match(html, /visibilitychange/, `${tag}: حارس إخفاء الصفحة`);
     assert.match(html, /cancelAnimationFrame/, `${tag}: إيقاف حلقة الرسم`);
     assert.match(html, /pointercancel/, `${tag}: تحرير اللمس عند الإلغاء`);
-    // التخزين مُغلَّف دائماً (قد يرمي SecurityError)
-    if (html.includes("localStorage")) assert.match(html, /try\s*\{[^}]*localStorage/, `${tag}: تخزين داخل try`);
+    // لا تخزين إطلاقاً: الصفحة تعمل في أصل معتم وكل واجهات التخزين ترمي
+    // SecurityError هناك، فتغليفها بـtry يضمن فشلاً لا فائدة منه. الحارس هو
+    // مدقّق المحيط نفسه، فيشمل الشبكة والحلقات غير المحروسة والميزانية.
+    const audit = auditWebViewHtml(html);
+    assert.deepEqual(audit.problems, [], `${tag}: مخالفات محيط WebView`);
+    assert.ok(audit.wire < WIRE_BUDGET, `${tag}: ${Math.round(audit.wire / 1024)}KB تحت الميزانية`);
   }
   // نصوص كل لغة مختلفة فعلاً (لا عربية ثابتة في النسخة الإنجليزية)
   const ar = b.build("ar"), en = b.build("en"), es = b.build("es");
@@ -93,11 +109,19 @@ assert.match(sonic, /TK\.hold\(TK\.\$\("boost"\)[\s\S]{0,80}S\.boost = false/, "
 assert.match(sonic, /Math\.min\(\(now - last\) \/ 1000, 0\.05\)/, "Sonic: dt مقصوص (لا قفزة بعد توقف)");
 
 // السجل
-assert.deepEqual(M.miniApps().map((a) => a.id).sort(), ["sonic", "xo"], "السجل");
+assert.deepEqual(M.miniApps().map((a) => a.id).sort(), BUILDERS.map((b) => b.id).sort(), "السجل");
 assert.equal(M.hasMiniApp("sonic"), true);
 assert.equal(M.hasMiniApp("nope"), false);
 assert.equal(M.renderMiniApp("nope").code, "unknown-mini-app", "لعبة غير مسجّلة");
-for (const id of ["sonic", "xo"]) {
+// كل لعبة لها اسم ووصف بثلاث لغات وفئة وارتفاع — لا مدخل ناقص في السجل
+for (const app of M.miniApps()) {
+  for (const lang of LANGS) {
+    assert.ok(app.name?.[lang]?.trim(), `${app.id}: اسم ${lang}`);
+    assert.ok(app.blurb?.[lang]?.trim(), `${app.id}: وصف ${lang}`);
+  }
+  assert.ok(app.icon && app.category && Number(app.height) > 0, `${app.id}: بيانات عرض ناقصة`);
+}
+for (const id of BUILDERS.map((b) => b.id)) {
   const r = M.renderMiniApp(id, { lang: "ar" });
   assert.equal(r.ok, true, `${id}: يمر من التحقق (${r.code || ""} ${(r.errors || []).join(",")})`);
 }

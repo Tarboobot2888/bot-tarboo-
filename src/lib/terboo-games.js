@@ -17,7 +17,7 @@
 // ═══════════════════════════════════════════════
 
 import { defineGame, legacyQuizContract } from "./terboo-arcade/contract.js";
-import { tryLegacyQuizContract } from "./terboo-arcade/legacy-quiz.js";
+import { contractId, tryLegacyQuizContract } from "./terboo-arcade/legacy-quiz.js";
 
 class TerbooGames {
   constructor() {
@@ -42,9 +42,30 @@ class TerbooGames {
     return cfg ? legacyQuizContract(cfg) : null;
   }
 
-  /** كل العقود: الأركيد + الأسئلة القديمة */
+  /**
+   * كل العقود القابلة للعب فعلاً، **بلا تكرار للعبة الواحدة**.
+   *
+   * `register()` يرحّل لعبة الأسئلة فوراً إلى `arcade` بمعرّف `q_<base>`
+   * (`contractId`). وكان هذا التابع يضيف فوقها عقداً قديم الشكل لكل مدخل في
+   * `registry` بمعرّف `gameType` المجرّد — فتظهر اللعبة الواحدة مرتين بمعرّفين،
+   * والنسخة القديمة بلا `controller` وبلا `renderer.view` أي **غير قابلة للعب
+   * عبر المحرّك**. العدد كان 67 لـ45 لعبة حقيقية، فكل عدّ أو سرد يبني على
+   * `contracts()` كان يبالغ ويُدرج نسخاً ميتة.
+   *
+   * الآن: `arcade` هو المصدر، والسجل لا يضيف إلا ما **لم يُرحَّل** (تخطّاه
+   * الترحيل لسبب مسجَّل في `legacySkipped`) حتى لا تختفي لعبة من السرد.
+   */
   contracts() {
-    return [...this.arcade.values(), ...[...this.registry.values()].map(legacyQuizContract)];
+    const out = [...this.arcade.values()];
+    const seen = new Set(out.map((c) => c.id));
+    for (const cfg of this.registry.values()) {
+      if (this.arcade.has(contractId(cfg))) continue;   // مُرحَّلة ⇒ النسخة الحيّة موجودة
+      const contract = legacyQuizContract(cfg);
+      if (seen.has(contract.id)) continue;
+      seen.add(contract.id);
+      out.push(contract);
+    }
+    return out;
   }
 
   /** يحل اسماً/مرادفاً إلى عقد (حساس لحالة الأحرف اللاتينية فقط) */

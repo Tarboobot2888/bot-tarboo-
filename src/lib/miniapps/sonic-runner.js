@@ -25,7 +25,7 @@ const COPY = {
 };
 
 const CSS = [
-  ".arena{aspect-ratio:auto;height:min(46vh,290px)}",
+  ".arena{height:min(46vh,290px)}",  // ارتفاع صريح: aspect-ratio يجعل القياس يطارد العرض
   ".arena canvas{display:block;width:100%;height:100%;touch-action:none}",
   ".meterrow{display:flex;align-items:center;gap:9px;padding:10px 3px 2px;color:#b5c9ee;font-size:11px;font-weight:700}",
   ".meter{flex:1;height:8px;background:#101726;border:1px solid #536580;border-radius:99px;overflow:hidden}",

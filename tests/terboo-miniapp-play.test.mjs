@@ -146,8 +146,153 @@ const layout = (page) => page.evaluate(() => ({
   await ctx.close();
 }
 
+// ─────────────── Snake: يُلعب فعلاً ───────────────
+{
+  const { ctx, page, errors, external } = await open("/app/snake?lang=ar");
+  await page.waitForSelector("#go");
+  await page.locator("#go").tap();
+  await page.waitForTimeout(700);
+  // الثعبان يتحرك فعلاً: نقارن بايتات البكسل لا طول data URL (قد يتساوى طوله
+  // بين لقطتين مختلفتين، فيمرّ اختبار لا يفحص شيئاً).
+  const moved = await page.evaluate(() => new Promise((resolve) => {
+    const cv = document.getElementById("cv");
+    const ctx = cv.getContext("2d");
+    const digest = () => {
+      const d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+      let h = 0;
+      for (let i = 0; i < d.length; i += 97) h = (h * 31 + d[i]) % 2147483647;
+      return h;
+    };
+    const a = digest();
+    setTimeout(() => resolve({ a, b: digest() }), 600);
+  }));
+  if (moved.a === moved.b) findings.push(`Snake: بكسلات الساحة لم تتغيّر — الحلقة لا تعمل (${moved.a})`);
+  // زر الاتجاه يُقبل ولا يرمي
+  await page.locator("#d").tap();
+  await page.waitForTimeout(250);
+  // الاصطدام بالجدار ينهي الجولة: نوجّه لأعلى باستمرار حتى تظهر شاشة النهاية
+  const ended = await page.evaluate(async () => {
+    const up = document.getElementById("u");
+    for (let i = 0; i < 40; i += 1) {
+      up.click();
+      await new Promise((r) => setTimeout(r, 60));
+      if (!document.getElementById("over").hidden) return true;
+    }
+    return !document.getElementById("over").hidden;
+  });
+  if (!ended) findings.push("Snake: الاصطدام بالجدار لم يُنهِ الجولة");
+  // إعادة الجولة تعيد الطول للبداية
+  await page.locator("#go").tap();
+  await page.waitForTimeout(300);
+  const restarted = await page.evaluate(() => Number(document.getElementById("len").textContent));
+  if (restarted !== 3) findings.push(`Snake: إعادة الجولة لم تُصفّر الطول (${restarted})`);
+  // الحلقة تتوقف عند الإخفاء ثم تُستأنف بنقرة صريحة — لا تجمّد صامت ولا جولة جديدة
+  const resumed = await page.evaluate(async () => {
+    const go = document.getElementById("go");
+    go.click();                                   // جولة جديدة
+    await new Promise((r) => setTimeout(r, 400));
+    const lenBefore = document.getElementById("len").textContent;
+    Object.defineProperty(document, "hidden", { value: true, configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await new Promise((r) => setTimeout(r, 200));
+    Object.defineProperty(document, "hidden", { value: false, configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await new Promise((r) => setTimeout(r, 200));
+    const shown = !document.getElementById("over").hidden;
+    go.click();                                   // استئناف لا إعادة
+    await new Promise((r) => setTimeout(r, 300));
+    return { shown, lenBefore, lenAfter: document.getElementById("len").textContent, hidden: document.getElementById("over").hidden };
+  });
+  if (!resumed.shown) findings.push("Snake: الإخفاء ثم الظهور لم يعرض استئنافاً (تجمّد صامت)");
+  if (!resumed.hidden) findings.push("Snake: الاستئناف لم يُخفِ شاشة التوقف");
+  if (errors.length) findings.push(`Snake: أخطاء console — ${errors.join(" | ")}`);
+  if (external.length) findings.push(`Snake: طلب خارجي — ${external.join(" | ")}`);
+  await ctx.close();
+}
+
+// ─────────────── Memory: يُلعب فعلاً ───────────────
+{
+  const { ctx, page, errors, external } = await open("/app/memory?lang=ar");
+  await page.waitForSelector(".card");
+  // نقرة تقلب بطاقة واحدة
+  await page.locator('.card[data-i="0"]').tap();
+  await page.waitForTimeout(150);
+  const oneUp = await page.evaluate(() => document.querySelectorAll(".card.up").length);
+  if (oneUp !== 1) findings.push(`Memory: النقرة لم تقلب بطاقة واحدة (${oneUp})`);
+  // زوج غير متطابق يُقلب مرة أخرى تلقائياً
+  const mismatch = await page.evaluate(async () => {
+    const cards = [...document.querySelectorAll(".card")];
+    const faceOf = (el) => el.querySelector(".front").textContent;
+    const first = cards[0];
+    const other = cards.find((c) => c !== first && faceOf(c) !== faceOf(first));
+    other.click();
+    await new Promise((r) => setTimeout(r, 900));
+    return document.querySelectorAll(".card.up").length;
+  });
+  if (mismatch !== 0) findings.push(`Memory: الزوج غير المتطابق لم يُقلب (${mismatch} ما زالت مكشوفة)`);
+  // زوج متطابق يبقى ويُحسب
+  const matched = await page.evaluate(async () => {
+    const cards = [...document.querySelectorAll(".card")];
+    const faceOf = (el) => el.querySelector(".front").textContent;
+    const a = cards[0];
+    const b = cards.find((c) => c !== a && faceOf(c) === faceOf(a));
+    a.click(); b.click();
+    await new Promise((r) => setTimeout(r, 300));
+    return { done: document.querySelectorAll(".card.done").length, pairs: document.getElementById("pairs").textContent };
+  });
+  if (matched.done !== 2) findings.push(`Memory: الزوج المتطابق لم يُثبَّت (${matched.done})`);
+  if (!matched.pairs.startsWith("1/")) findings.push(`Memory: عدّاد الأزواج لم يتقدّم (${matched.pairs})`);
+  // إعادة الجولة تمسح كل شيء
+  await page.locator("#again").tap();
+  await page.waitForTimeout(200);
+  const reset = await page.evaluate(() => ({
+    up: document.querySelectorAll(".card.up,.card.done").length,
+    moves: document.getElementById("moves").textContent,
+  }));
+  if (reset.up !== 0 || reset.moves !== "0") findings.push(`Memory: الإعادة لم تُصفّر (${reset.up} بطاقة · ${reset.moves} حركة)`);
+  if (errors.length) findings.push(`Memory: أخطاء console — ${errors.join(" | ")}`);
+  if (external.length) findings.push(`Memory: طلب خارجي — ${external.join(" | ")}`);
+  await ctx.close();
+}
+
+// ─────────────── 2048: المنطق صحيح ويُلعب ───────────────
+{
+  const { ctx, page, errors, external } = await open("/app/n2048?lang=ar");
+  await page.waitForSelector(".tile");
+  const start = await page.evaluate(() => [...document.querySelectorAll(".tile")].filter((t) => t.dataset.v !== "0").length);
+  if (start !== 2) findings.push(`2048: البداية ليست ببلاطتين (${start})`);
+  // سحب بالأسهم يحرّك اللوحة ويولّد بلاطة جديدة
+  const afterMove = await page.evaluate(async () => {
+    const before = [...document.querySelectorAll(".tile")].map((t) => t.dataset.v).join(",");
+    for (const key of ["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"]) {
+      dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    const after = [...document.querySelectorAll(".tile")].map((t) => t.dataset.v).join(",");
+    const filled = [...document.querySelectorAll(".tile")].filter((t) => t.dataset.v !== "0").length;
+    return { changed: before !== after, filled, score: Number(document.getElementById("score").textContent) };
+  });
+  if (!afterMove.changed) findings.push("2048: الحركة لم تغيّر اللوحة");
+  if (afterMove.filled < 3) findings.push(`2048: لم تُولَّد بلاطات جديدة (${afterMove.filled})`);
+  // كل قيمة على اللوحة قوة للعدد 2 (دمج سليم لا أرقام مختلقة)
+  const values = await page.evaluate(() => [...document.querySelectorAll(".tile")].map((t) => Number(t.dataset.v)).filter(Boolean));
+  const bad = values.filter((v) => v < 2 || (v & (v - 1)) !== 0);
+  if (bad.length) findings.push(`2048: قيم ليست قوى للعدد 2 — ${bad.join(",")}`);
+  // إعادة الجولة تُصفّر
+  await page.locator("#again").tap();
+  await page.waitForTimeout(200);
+  const reset = await page.evaluate(() => ({
+    filled: [...document.querySelectorAll(".tile")].filter((t) => t.dataset.v !== "0").length,
+    score: document.getElementById("score").textContent,
+  }));
+  if (reset.filled !== 2 || reset.score !== "0") findings.push(`2048: الإعادة لم تُصفّر (${reset.filled} بلاطة · ${reset.score})`);
+  if (errors.length) findings.push(`2048: أخطاء console — ${errors.join(" | ")}`);
+  if (external.length) findings.push(`2048: طلب خارجي — ${external.join(" | ")}`);
+  await ctx.close();
+}
+
 // ─────────────── تجاوب واتجاه ───────────────
-for (const id of ["xo", "sonic"]) {
+for (const id of ["xo", "sonic", "snake", "memory", "n2048"]) {
   for (const width of WIDTHS) {
     const { ctx, page } = await open(`/app/${id}?lang=ar`, { width });
     await page.waitForSelector(".app");
@@ -166,5 +311,5 @@ for (const id of ["xo", "sonic"]) {
 await browser.close();
 await new Promise((r) => server.close(r));
 assert.deepEqual(findings, [], `مخالفات تشغيل Mini Apps:\n - ${findings.join("\n - ")}`);
-console.log(`✅ terboo-miniapp-play: XO تُلعب (نقرة⇒X · رد الكمبيوتر · رفض خانة مشغولة · إعادة بلا مستمع مكرر · صعب لا يُهزم) · Sonic (حلقة تتقدم · قفز · تتوقف عند الإخفاء) · ${WIDTHS.join("/")}px بلا overflow · RTL+LTR · 0 أخطاء console · 0 طلب خارجي`);
+console.log(`✅ terboo-miniapp-play: 5 ألعاب تُلعب في Chromium — XO (نقرة⇒X · رد الكمبيوتر · رفض خانة مشغولة · صعب لا يُهزم) · Sonic (حلقة · قفز · توقف عند الإخفاء) · Snake (حركة · اتجاه · موت بالجدار · إعادة · استئناف بعد الإخفاء) · Memory (قلب · زوج خاطئ يعود · زوج صحيح يثبت · إعادة) · 2048 (حركة · توليد · قوى 2 · إعادة) · ${WIDTHS.join("/")}px بلا overflow · RTL+LTR · 0 أخطاء console · 0 طلب خارجي`);
 process.exit(0);

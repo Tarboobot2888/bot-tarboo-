@@ -15076,5 +15076,8 @@
  "إكس أو تفاعلية ضد الكمبيوتر بثلاث مستويات": "Interactive Tic Tac Toe vs the computer, three levels",
  "لعبة جري تفاعلية باللمس داخل صفحة Mini App": "Touch-based endless runner inside a Mini App page",
  "الأمر غير مهيّأ": "Command not configured",
- "اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.": "Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_AI_TOKEN in the environment."
+ "اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.": "Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_AI_TOKEN in the environment.",
+ "ثعبان تفاعلي على شبكة باللمس": "Interactive grid snake played by touch",
+ "لعبة ذاكرة تفاعلية بثمانية أزواج": "Interactive memory game with eight pairs",
+ "دمج أرقام تفاعلي حتى 2048": "Interactive number merging up to 2048"
 }

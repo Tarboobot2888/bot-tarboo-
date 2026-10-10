@@ -1,0 +1,63 @@
+{
+  "base": "cbb8d59",
+  "probedAt": "2026-10-10T13:10:18.735Z",
+  "node": "v22.22.0",
+  "results": [
+    {
+      "file": "terboo-baileys-migration.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: أُرسلت رسالة غنية بلا تفعيل · 1 !== 0",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: أُرسلت رسالة غنية بلا تفعيل · 1 !== 0",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-channel-forward.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal: · 'text' !== 'rich'",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal: · 'text' !== 'rich'",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-code-card.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-design.test.mjs",
+      "state": "FAIL",
+      "claim": "",
+      "nowState": "FAIL",
+      "nowClaim": "",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-group-ai-reports.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: رسالة غنية لا تُعرض على الأجهزة العادية · 1 !== 0",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: رسالة غنية لا تُعرض على الأجهزة العادية · 1 !== 0",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-i18n-runtime.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: وحدات بلا ترجمة: 27 · 27 !== 0",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: وحدات بلا ترجمة: 27 · 27 !== 0",
+      "sameClaim": true
+    },
+    {
+      "file": "terboo-typography.test.mjs",
+      "state": "FAIL",
+      "claim": "AssertionError [ERR_ASSERTION]: Inter لا يُستعمل داخل SVG (يرسم بخط النظام)",
+      "nowState": "FAIL",
+      "nowClaim": "AssertionError [ERR_ASSERTION]: Inter لا يُستعمل داخل SVG (يرسم بخط النظام)",
+      "sameClaim": true
+    }
+  ]
+}

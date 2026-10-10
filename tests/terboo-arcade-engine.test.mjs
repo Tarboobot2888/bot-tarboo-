@@ -50,9 +50,19 @@ await check("contract-and-single-registry", async () => {
     }
     for (const lg of ["ar", "en", "es"]) assert.ok(c.name[lg], `${c.id} name ${lg}`);
   }
-  // سجل واحد: الأركيد + ألعاب الأسئلة القديمة عبر نفس games
+  // سجل واحد: لعبة الأسئلة القديمة تُحَل من أمرها العربي إلى عقد **مربوط
+  // بالمحرّك**، لا إلى نسخة قديمة الشكل بلا controller.
+  // قبل الترحيل كان `contracts()` يحمل الشكلين بمعرّفين (`خمن_العلم` و
+  // `q_tebakbendera`) فيظهر عقد غير قابل للعب في كل سرد وعدّ. الآن مدخل واحد.
   const all = games.contracts();
-  assert.ok(all.some((c) => c.legacy && c.id === "خمن_العلم"), "لعبة الأسئلة القديمة في نفس السجل");
+  const resolved = games.resolve("خمن_العلم");
+  assert.ok(resolved, "الأمر العربي لم يُحَل إلى عقد");
+  assert.equal(resolved.id, "q_tebakbendera", "يُحَل إلى العقد المُرحَّل لا إلى شكل قديم");
+  assert.ok(resolved.controller, "العقد المُحَل مربوط بالمحرّك");
+  assert.ok(!resolved.legacy, "العقد المُحَل ليس الشكل القديم");
+  assert.ok(!all.some((c) => c.id === "خمن_العلم"), "نسخة ظلّ بمعرّف خام ما زالت في السجل");
+  const ids = all.map((c) => c.id);
+  assert.equal(new Set(ids).size, ids.length, "معرّفات مكررة في السجل");
   assert.equal(games.resolve("ttt").id, "xo");
   assert.equal(games.resolve("ut").id, "snakes");
   assert.equal(games.resolve("suit").id, "rps");

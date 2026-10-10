@@ -7,7 +7,8 @@
 // قيود بيئة التشغيل (مستخرجة من قياس فعلي — انظر TERBOO_NATIVE_MINIAPP_AUDIT.md):
 //   • صفحة اللعبة تعمل بلا شبكة داخل WebView الرسالة ⇒ لا fetch ولا WebSocket.
 //     لذلك لا يبني أي builder هنا لعبة تحتاج الخادم؛ تلك تمر بمسار /play/<token>.
-//   • التخزين (localStorage…) قد يرمي SecurityError ⇒ يُغلَّف دائماً ولا يُعتمد عليه.
+//   • لا تخزين دائم إطلاقاً: كل واجهات التخزين ترمي SecurityError في الأصل المعتم
+//     الذي تعمل فيه الصفحة، فالحالة في الذاكرة وعمرها عمر الفقاعة.
 //   • حلقة الرسم يجب أن تتوقف خارج الشاشة وإلا استنزفت البطارية.
 // البنّاء لا يرسل رسائل ولا يعرف sock أو m — هذه مسؤولية طبقة النقل.
 // ═══════════════════════════════════════════════
@@ -95,11 +96,16 @@ const BASE_CSS = [
  */
 const KIT_JS = `
 const TK = (() => {
-  // ── تخزين اختياري: يرمي SecurityError في الأصل المعتم، فلا يُعتمد عليه أبداً ──
+  // ── ذاكرة الجلسة: عمرها عمر الفقاعة وحدها ──
+  // لا localStorage ولا sessionStorage: الصفحة تعمل في أصل معتم، وكل واجهات
+  // التخزين ترمي SecurityError هناك، فاستدعاؤها يضمن فشلاً لا فائدة منه.
+  // القيمة تُعرض في الواجهة بوصفها «هذه الجولة» لا رقماً قياسياً محفوظاً.
+  const memory = Object.create(null);
   const store = {
-    // التخزين قد يرمي SecurityError في بيئات معيّنة؛ نسجّل السبب ولا نُخفيه
-    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (err) { console.debug("storage read blocked", k, err && err.message); return d; } },
-    set(k, v) { try { localStorage.setItem(k, String(v)); return true; } catch (err) { console.debug("storage write blocked", k, err && err.message); return false; } },
+    get(k, d) { return k in memory ? memory[k] : d; },
+    set(k, v) { memory[k] = String(v); return true; },
+    /** الحالة تُفقد عند إغلاق الفقاعة — تُستخدم لصياغة نص الواجهة بصدق */
+    persistent: false,
   };
   // ── حلقة رسم واحدة فقط، وتتوقف عندما تختفي الصفحة ──
   function loop(step) {

@@ -15076,5 +15076,8 @@
  "إكس أو تفاعلية ضد الكمبيوتر بثلاث مستويات": "Tres en raya interactivo contra la maquina, tres niveles",
  "لعبة جري تفاعلية باللمس داخل صفحة Mini App": "Juego de carrera tactil dentro de una pagina Mini App",
  "الأمر غير مهيّأ": "Comando sin configurar",
- "اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.": "Define CLOUDFLARE_ACCOUNT_ID y CLOUDFLARE_AI_TOKEN en el entorno."
+ "اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.": "Define CLOUDFLARE_ACCOUNT_ID y CLOUDFLARE_AI_TOKEN en el entorno.",
+ "ثعبان تفاعلي على شبكة باللمس": "Serpiente interactiva en rejilla, por tacto",
+ "لعبة ذاكرة تفاعلية بثمانية أزواج": "Juego de memoria interactivo con ocho pares",
+ "دمج أرقام تفاعلي حتى 2048": "Combinacion interactiva de numeros hasta 2048"
 }

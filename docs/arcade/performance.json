@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-10-10T08:40:33.231Z",
+  "generatedAt": "2026-10-10T13:05:37.093Z",
   "node": "v22.22.0",
   "results": [
     {
       "size": 100,
-      "createMs": 17,
-      "actionsMs": 65,
-      "perActionMs": 0.65,
-      "sweepMs": 10,
+      "createMs": 13,
+      "actionsMs": 50,
+      "perActionMs": 0.5,
+      "sweepMs": 7,
       "heapStartMb": 31,
-      "heapPeakMb": 41
+      "heapPeakMb": 44
     },
     {
       "size": 500,
-      "createMs": 36,
-      "actionsMs": 110,
-      "perActionMs": 0.22,
-      "sweepMs": 27,
-      "heapStartMb": 42,
-      "heapPeakMb": 47
+      "createMs": 28,
+      "actionsMs": 117,
+      "perActionMs": 0.23,
+      "sweepMs": 18,
+      "heapStartMb": 45,
+      "heapPeakMb": 45
     },
     {
       "size": 1000,
-      "createMs": 51,
-      "actionsMs": 208,
+      "createMs": 44,
+      "actionsMs": 210,
       "perActionMs": 0.21,
-      "sweepMs": 33,
-      "heapStartMb": 38,
-      "heapPeakMb": 52
+      "sweepMs": 30,
+      "heapStartMb": 36,
+      "heapPeakMb": 50
     }
   ]
 }

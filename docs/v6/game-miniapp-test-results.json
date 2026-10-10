@@ -1,0 +1,1044 @@
+{
+  "generatedAt": "2026-10-10T13:09:22.423Z",
+  "node": "v22.22.0",
+  "total": 129,
+  "passed": 122,
+  "failed": 7,
+  "blocked": 0,
+  "notRun": 3,
+  "skipped": 3,
+  "results": [
+    {
+      "file": "terboo-import-graph.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 1564,
+      "summary": "✅ terboo-import-graph: 1450 ملف · 5461 استيراد · 0 مفقود · 0 استيراد محلي قديم",
+      "reason": ""
+    },
+    {
+      "file": "terboo-syntax.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 14461,
+      "summary": "✅ terboo-syntax: 1450 ملف · 0 أخطاء نحوية",
+      "reason": ""
+    },
+    {
+      "file": "agent-control.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 96,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "agent-health-memory.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 206,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "agent-plugin.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 16273,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "ai-studio-behavioral.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 590,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "ai-studio-foundation.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 399,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "ai-studio-image-policy.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 45,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "ai-workspace-router.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 407,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "autoai-always-reply.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 751,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "autoai-arabic-personas.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 483,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "autoai-behavioral.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 885,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "bot-loop-guard.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 645,
+      "summary": "✅ bot-loop-guard.test.mjs passed",
+      "reason": ""
+    },
+    {
+      "file": "environment-key-guard.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 478,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "handler-speaker-priority.integration.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 1222,
+      "summary": "✅ handler speaker-priority integration test passed",
+      "reason": ""
+    },
+    {
+      "file": "import-repair.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 547,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "manus-agent.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 301,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "mode-config-guard.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 417,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "owner-bypass.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 482,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "pindl.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 295,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "plugin-diagnostics.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 95,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "plugin-move.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 180,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "provider-health.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 40,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "raw-code-plugin.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 292,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "reddit.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 164,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "reply-variant-selector.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 434,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "spotify-provider.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3182,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "task-queue.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 94,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-agent-limits.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2848,
+      "summary": "✅ terboo-agent-limits: step-timeout-rollback · user-interrupt · plan-budget · max-steps",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-agent-actions.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 15121,
+      "summary": "✅ terboo-ai-agent-actions: 28 سيناريو حقيقي — cooldown-explained · 01-add-by-name · 02-kick-pronoun-lid · 03-readd · 04-promote-pronoun · 05-members · 06-admins · 07-presence · 07b-demote-same-member · 07c-owner-last-added-search · 07d-follow-up-chain-and-repeat · 08-change-usage-by-words · 09-11-usage-switch-and-menu · 12-unregistered-group-ai · 23-no-fake-success · 13-ambiguous-then-pick · 15-pn",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-agent.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 5898,
+      "summary": "✅ terboo-ai-agent: تنفيذ متعدد حقيقي · تحقّق · عكس عند الفشل · موافقة · تحكّم مالك آمن بلغة طبيعية",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-assistant.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2719,
+      "summary": "✅ terboo-ai-assistant: كل الاختبارات نجحت",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-conversation.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2876,
+      "summary": "✅ terboo-ai-conversation: متابعات حتمية · أوامر حقيقية بهدف صحيح · معلّق/إلغاء/خيارات · لغة لكل شخص · ذاكرة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-core-v4.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 21705,
+      "summary": "✅ terboo-ai-core-v4: 11 فحص · المجموعة منشن/رد/«تيربو» · خصوصية · مراحل §10 · أفضل أداة §11 · أدوات المالك §26",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-core.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2852,
+      "summary": "✅ terboo-ai-core: 8 أنواع قرار · 929 أمر مفهرس · صندوق الأدوات محكم",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-dispatch.integration.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2703,
+      "summary": "✅ terboo-ai-dispatch.integration: طلب طبيعي ⇒ بلوقن الطرد الحقيقي للمشرف فقط، بكل الصلاحيات",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-matrix.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2826,
+      "summary": "✅ terboo-ai-matrix: 10/10 فئات (CHAT · COMMAND · SCRAPER · IMAGE · SEARCH · VISION · FILE · AGENT · OWNER · MEMORY) مع متابعة لكل فئة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-memory.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 465,
+      "summary": "✅ terboo-ai-memory: 1 خاص · 2 مجموعة · 1 سجل عضو · بلا تسريب",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-output.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 48,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-quality.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3708,
+      "summary": "✅ terboo-ai-quality: تنويع الردود (هوية · تحية · بداية · خاتمة · إيموجي، معزول لكل محادثة) عبر النواة وcomposeReply، حارس الأخطاء المصنّفة المترجمة عند حدّ الإرسال، منع معالجة الرسالة مرتين، ونواة واحدة لكل مسارات الذكاء",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-recovery.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3628,
+      "summary": "✅ terboo-ai-recovery: parse-tolerant · code-request-direct · raw-text-answer-is-chat · provider-down-no-command · fallback-never-runs-owner-tool · no-object-object · gpt52-stream-shapes · gate-patterns-from-reports · decision-repair-and-request · no-false-action-claim · group-create-add-me · no-contradicting-preface · chat-claim-rewritten · vision-fallback-caption",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ai-runtime.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3614,
+      "summary": "✅ terboo-ai-runtime: intent-matrix · download-cancel-audio · background-status-cancel · result-persists · single-primary-decision · priority-order",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-ai.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3710,
+      "summary": "✅ terboo-arcade-ai: 11 ألعاب بخصم (4 مستويات قانونية وحتمية) · XO خبير بلا خسارة · سد/إكمال · لا قراءة أسرار · مستويات مختلفة · لا LLM · 19 حالة نية",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-engine.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 476,
+      "summary": "✅ terboo-arcade-engine: 7 مجموعات (contract-and-single-registry · action-protocol-security · states-host-spectators · rewards-idempotent-and-daily-cap · challenge-accept-decline-expire · timeout-and-rematch · persistence-db-repository)",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-games.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 589,
+      "summary": "✅ terboo-arcade-games: 23/23 لعبة لُعبت حتى النهاية · قواعد (جاذبية · أكل إجباري · قلب · كشف آمن · دمج · سودوكو · وردل · ثيران · حروف) · لا تسريب (سفن · بطاقات · إجابة · سر · تتابع)",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-html.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 434,
+      "summary": "✅ terboo-arcade-html: هروب · مدقق (11 رفض) · نقل HTML primitive لـ23 لعبة · بلا انتحال · جسر الإجراءات غير مُعلن · قوالب بموافقة المالك · 6 ثيمات · renderers",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-multiplayer.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 4571,
+      "summary": "✅ terboo-arcade-multiplayer: XO مجموعة (أزرار+كتابة+nonce+دور+فوز+مكافأة) · تحدي صديق · ضد الكمبيوتر · ثعبان وسلم 4 لاعبين · أسئلة جماعية · اختيار سري في الخاص · كلام طبيعي",
+      "reason": ""
+    },
+    {
+      "file": "terboo-arcade-performance.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 902,
+      "summary": "✅ terboo-arcade-performance: 100 غرفة: إنشاء 13ms · حركات 50ms (0.5ms/حركة) · تنظيف 7ms · heap 44MB | 500 غرفة: إنشاء 28ms · حركات 117ms (0.23ms/حركة) · تنظيف 18ms · heap 45MB | 1000 غرفة: إنشاء 44ms · حركات 210ms (0.21ms/حركة) · تنظيف 30ms · heap 50MB · كل الفهارس فارغة بعد التنظيف",
+      "reason": ""
+    },
+    {
+      "file": "terboo-baileys-migration.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 705,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-brand-assets.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 925,
+      "summary": "✅ terboo-brand-assets: 84 صورة هوية (43 قسم · 8 shuffle) · 41 أصل محفوظ · 0 مسار مكسور",
+      "reason": ""
+    },
+    {
+      "file": "terboo-brand-lock.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 471,
+      "summary": "✅ terboo-brand-lock: الهوية Terboo/تيربو ثابتة، الأشكال الخاطئة تُصحَّح، المرادفات القديمة مخفية، الترحيل يحفظ البيانات",
+      "reason": ""
+    },
+    {
+      "file": "terboo-brat.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 67,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-bulk-executor.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 441,
+      "summary": "✅ terboo-bulk-executor: batches-and-verify · no-blind-retry · permanent-failure-not-retried · provider-ok-but-not-verified · cancel-between-batches · resume-skips-done · error-codes · durations · parse-settings · parse-bulk · parse-block-and-text",
+      "reason": ""
+    },
+    {
+      "file": "terboo-capability-registry.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2749,
+      "summary": "✅ terboo-capability-registry: 1082 قدرة · 63 scraper · 49 إجراء · 929 أمر · 855 معروضة للنموذج",
+      "reason": ""
+    },
+    {
+      "file": "terboo-channel-forward.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 456,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-claude-adapter.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 696,
+      "summary": "✅ terboo-claude-adapter: request-shape · image-block · refusal · vision-route-uses-claude · key-from-config · no-key-no-claude",
+      "reason": ""
+    },
+    {
+      "file": "terboo-cloud-admin.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3111,
+      "summary": "✅ terboo-cloud-admin: ptero-panels-and-pages · legacy-delserver-verified · legacy-list-users · ptero-suspend-verified · vpsadmin-command · virtualizor-admin",
+      "reason": ""
+    },
+    {
+      "file": "terboo-code-card.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 906,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-code-review.approval.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 537,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-code-review.e2e.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 604,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-code-review.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 487,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-command-router.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2813,
+      "summary": "✅ terboo-command-router: 42 طلباً بأربع لغات/لهجات · الصلاحيات قبل الترشيح",
+      "reason": ""
+    },
+    {
+      "file": "terboo-config-template.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 935,
+      "summary": "✅ terboo-config-template: 20 قيمة سرية فُحصت · 0 تسرّب · قالب secrets فارغ (24 مفتاحاً) · البنية مطابقة · --check لا يكتب",
+      "reason": ""
+    },
+    {
+      "file": "terboo-dead-buttons.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3032,
+      "summary": "✅ terboo-dead-buttons: 126 زر · 52 أمر · 0 ميت",
+      "reason": ""
+    },
+    {
+      "file": "terboo-design.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 8053,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-fake-card.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 109,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-game-image-policy.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3247,
+      "summary": "✅ terboo-game-image-policy: فحص ثابت (110 ملف · 0 مولّد · 0 حقل صورة) · دورة حياة 45 لعبة بلا صورة · فشل النقل بلا صورة · عقد VisualResponse (ألعاب ممنوعة · غير الألعاب مسموحة) · بنّاء HTML بلا img/data:image",
+      "reason": ""
+    },
+    {
+      "file": "terboo-group-actions.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 4003,
+      "summary": "✅ terboo-group-actions: lock-now-verified · settings-get · member-denied · unlock-later-scheduled-and-cancel · lock-for-duration · kick-all-admin-needs-owner · kick-all-except-ahmed-batches · kick-all-technical-limits · selected-promote-and-demote · selected-kick-cancel · block-owner-only-with-confirm · invite-and-revoke · subject-verified · stop-install-only · truthful-resume-after-restart · mode",
+      "reason": ""
+    },
+    {
+      "file": "terboo-group-ai-reports.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 2720,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-group-directory.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 732,
+      "summary": "✅ terboo-group-directory: name-matching · directory-from-metadata · incremental-updates · dedupe-and-refresh · shared-metadata-cache",
+      "reason": ""
+    },
+    {
+      "file": "terboo-http-client.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2711,
+      "summary": "✅ terboo-http-client: json · timeout · abort · read-retry · no-write-retry · size-limit · schema · redaction · circuit · legacy-f · axios-layer",
+      "reason": ""
+    },
+    {
+      "file": "terboo-i18n-runtime.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 2366,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-identity.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 591,
+      "summary": "✅ terboo-identity: 16 فحص · pn-private · lid-private-remoteJidAlt · lid-private-signal-mapping · lid-unknown-no-fabrication · group-participantAlt · admin-lid · suffix-attack · owner-number-forms · quoted-and-mention-lid · lid-mapping-event · target-guard · kick-lid-member · kick-by-pn-in-lid-group · kick-protections · promote-demote-warn · dispatch-mentions",
+      "reason": ""
+    },
+    {
+      "file": "terboo-integration-scenario.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3556,
+      "summary": "✅ terboo-integration-scenario: مرحبا ← بتعمل اي ← تحميل عبر سجل الأدوات ← حفظ الاسم ← تذكّره ← القائمة ← الأدوات ← تنفيذ رمز_QR، كلها في دردشة المستخدم وفي نفس السياق",
+      "reason": ""
+    },
+    {
+      "file": "terboo-integrity.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2664,
+      "summary": "✅ terboo-integrity: 938 بلوقن · 1252 أمر · 1374 مرادف · 187 ملف core",
+      "reason": ""
+    },
+    {
+      "file": "terboo-interactive-compat.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 5304,
+      "summary": "✅ terboo-interactive-compat: 11/11 حقول §32 · 11 صيغة عبر WAProto الرسمي (7.0.0-rc14) × 3 أغلفة × بادئة/بدون · مجموعة · قائمة حقيقية · لا ضغطة صامتة · 73 تنفيذ حقيقي",
+      "reason": ""
+    },
+    {
+      "file": "terboo-interactive.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2722,
+      "summary": "✅ terboo-interactive: كل الأزرار والصفوف تنتهي بأمر حقيقي — لا ضغطة صامتة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-l10n-runtime.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 4790,
+      "summary": "✅ terboo-l10n-runtime: 90 رداً حقيقياً من 45 بلوقن بالإنجليزية والإسبانية بلا بقايا عربية (سوى وسائط الأوامر)، أرقام لاتينية، القالب الأدق، حدود الكلمات، الأسهم والترقيم",
+      "reason": ""
+    },
+    {
+      "file": "terboo-languages.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2688,
+      "summary": "✅ terboo-languages: catalog · requested-language · documents · attachment-analysis · intent-and-route · code-instruction-language",
+      "reason": ""
+    },
+    {
+      "file": "terboo-link-guard.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 44,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-localization.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 129,
+      "summary": "✅ terboo-localization: 1587 مفتاح × 3 لغات · 16 ملف خط",
+      "reason": ""
+    },
+    {
+      "file": "terboo-member-card.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 922,
+      "summary": "✅ terboo-member-card: 4 — clean-name · name-resolution · card-render · welcome-and-goodbye-send-card",
+      "reason": ""
+    },
+    {
+      "file": "terboo-memory-matrix.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 457,
+      "summary": "✅ terboo-memory-matrix: 5 خلايا بلا تسريب · مشتركة بلا خاص · دلالي · ملخّص · نسيان · TTL · إذن المالك · ترحيل",
+      "reason": ""
+    },
+    {
+      "file": "terboo-menu-delivery.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3166,
+      "summary": "✅ terboo-menu-delivery: الرئيسية (الشكل 1: Native Flow ببطاقة البوت ونفس الأزرار) والأقسام تسلك مسار الإعدادات والمزيد نفسه (LID محلول، اقتباس صحيح، طبقة أولى primary)، الأزرار العائمة القديمة opt-in، التحقق قبل النقل، تحويل حمولات البلوقنات القديمة بنفس المعرّفات، والرفض يُسقط للطبقة التالية حتى النص",
+      "reason": ""
+    },
+    {
+      "file": "terboo-menus.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3200,
+      "summary": "✅ terboo-menus: 9 قوائم × 3 لغات · 138 صفاً · 690 ضغطة بخمس صيغ · 74 وصولاً حقيقياً للبلوقن · أزرار اللغة والنسخ · المعروض = المُختبَر",
+      "reason": ""
+    },
+    {
+      "file": "terboo-messaging.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3058,
+      "summary": "✅ terboo-messaging: send-local-number · duplicate-not-resent · not-on-whatsapp · stranger-denied · send-by-name-confirmed · broadcast-dry-run · broadcast-all-bots · broadcast-stop-and-resume · per-account-group-cache · model-cannot-pick-number",
+      "reason": ""
+    },
+    {
+      "file": "terboo-miniapp-builders.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 427,
+      "summary": "✅ terboo-miniapp-builders: 5 بنّاء × 3 لغات · بنية ومحتوى وحجم · 0 مورد خارجي · 0 معرّف مكرر · بلا شبكة/eval · حارس إخفاء + تحرير لمس · nonce · أزرار مربوطة · سجل",
+      "reason": ""
+    },
+    {
+      "file": "terboo-miniapp-play.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 16521,
+      "summary": "✅ terboo-miniapp-play: 5 ألعاب تُلعب في Chromium — XO (نقرة⇒X · رد الكمبيوتر · رفض خانة مشغولة · صعب لا يُهزم) · Sonic (حلقة · قفز · توقف عند الإخفاء) · Snake (حركة · اتجاه · موت بالجدار · إعادة · استئناف بعد الإخفاء) · Memory (قلب · زوج خاطئ يعود · زوج صحيح يثبت · إعادة) · 2048 (حركة · توليد · قوى 2 · إعادة) · 320/360/412px بلا overflow · RTL+LTR · 0 أخطاء console · 0 طلب خارجي",
+      "reason": ""
+    },
+    {
+      "file": "terboo-miniapp-security.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2804,
+      "summary": "✅ terboo-miniapp-security: وكيل الأصول (توقيع · عبث · انتهاء · مضيف مغلق · لا SVG/HTML · 405) · قناة الإجراءات (stale · bad-nonce · expired · 6 حقول قرار · actionId · حمولة ضخمة · رمز غريب · تزامن ⇒ 1) · رمز بلا هوية خام · سرية الاختيار في المجموعة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-miniapp-transport.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 549,
+      "summary": "✅ terboo-miniapp-transport: القدرة من دالة إرسال حقيقية · 0 حقل إثبات ملفَّق (حارس مُختبَر) · بروتو الحزمة الرسمية يحمل الشكل · relayMessage واحد لكل لعبة · مطفأ ⇒ نص سبب بلا رابط ولا أزرار · فشل ⇒ نص بلا بديل · ميزانية ومحيط يرفضان قبل الإرسال · مخرج الرابط بتفعيل صريح",
+      "reason": ""
+    },
+    {
+      "file": "terboo-miniapp-ui.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 14812,
+      "summary": "✅ terboo-miniapp-ui: Chromium حقيقي · صفحة لعب على 320/360/412/480/820px بلا overflow · RTL+LTR · 0 أخطاء console · 0 موارد خارجية · نقرة لمس ⇒ حالة الخادم · حقل قرار مرفوض · أصل بصري same-origin موقّع · كتالوج 45+5 لعبة ببحث وفلاتر",
+      "reason": ""
+    },
+    {
+      "file": "terboo-multimodal.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 6577,
+      "summary": "✅ terboo-multimodal: ocr-real · vision-receives-image · vision-capability-honest · media-routing · voice-note-transcribed · voice-honest-failures · transcribe-quoted · voice-reply · video-quick · documents · scanned-pdf-ocr · security-limits",
+      "reason": ""
+    },
+    {
+      "file": "terboo-natural-ai.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 607,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-no-silent-catch.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 573,
+      "summary": "✅ terboo-no-silent-catch: 1324 ملف · 0 catch صامت · 862 موضع تسجيل · السجل والتسجيل والإرسال الحقيقي",
+      "reason": ""
+    },
+    {
+      "file": "terboo-nvidia-ai.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 168,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-onboarding.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 725,
+      "summary": "✅ terboo-onboarding: كل الاختبارات نجحت",
+      "reason": ""
+    },
+    {
+      "file": "terboo-performance.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 4683,
+      "summary": "✅ terboo-performance: مزوّد واحد لكل رسالة، مهلة وقاطع دائرة وميزانية، نواة داخلية سريعة، بلا تأخير مصطنع، كل المراحل مقيسة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-permissions.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2521,
+      "summary": "✅ terboo-permissions: group-actions · account-and-owner-tools · resources · target-protection · identity · legacy-roles-hidden-from-ai · matrix",
+      "reason": ""
+    },
+    {
+      "file": "terboo-plugin-workbench.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 190,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-protobuf.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 675,
+      "summary": "✅ terboo-protobuf: 6 فحص · no-production-fromObject · referenced-types-exist · sensitive-round-trips · enum-hazard-documented · webmessageinfo-relay · migrated-plugins-load (Baileys 7.0.0-rc14)",
+      "reason": ""
+    },
+    {
+      "file": "terboo-provider-router.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 5573,
+      "summary": "✅ terboo-provider-router: fast-primary-single-call · slow-primary-hedged · failing-primary-immediate-fallback · health-aware-promotion · no-hedge-for-summary",
+      "reason": ""
+    },
+    {
+      "file": "terboo-pterodactyl.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 508,
+      "summary": "✅ terboo-pterodactyl: ssrf · add-client-panel · servers-and-permissions · application-panel · edit-replace-delete",
+      "reason": ""
+    },
+    {
+      "file": "terboo-quote.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 51,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-registration-optional.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2728,
+      "summary": "✅ terboo-registration-optional: 6 سيناريوهات نجحت",
+      "reason": ""
+    },
+    {
+      "file": "terboo-reminders.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2580,
+      "summary": "✅ terboo-reminders: parse-matrix · kernel-flow · honest-no-promise · privacy-and-limits · real-scheduler-exact-date",
+      "reason": ""
+    },
+    {
+      "file": "terboo-rich-response.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 1057,
+      "summary": "✅ terboo-rich-response: 18 فحص · 18 لغة · تلوين بلا فقد · بديل تلقائي · بلا انتحال Meta AI",
+      "reason": ""
+    },
+    {
+      "file": "terboo-scraper-ai-e2e.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2911,
+      "summary": "✅ terboo-scraper-ai-e2e: 8 طلبات عبر البلوقنات الحقيقية بلا نموذج، 3 منصات عبر المحوّلات، TOOL من النموذج بنداء واحد، حماية المدخلات",
+      "reason": ""
+    },
+    {
+      "file": "terboo-scraper-registry.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 906,
+      "summary": "✅ terboo-scraper-registry: 63/63 scraper مسجّل ومكتشف، 20 طلباً طبيعياً، بديل واحد، قاطع دائرة، إرسال ذكي",
+      "reason": ""
+    },
+    {
+      "file": "terboo-scrapers-each.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 9760,
+      "summary": "✅ terboo-scrapers-each: 63/63 scraper × 10 فحوص · 63 ملفاً = 63 أداة مسجّلة · قاطع دائرة وبديل",
+      "reason": ""
+    },
+    {
+      "file": "terboo-secrets-vault.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 422,
+      "summary": "✅ terboo-secrets-vault: config-secrets · console-and-failure-log · outgoing-message · ai-ask-redacts · vault",
+      "reason": ""
+    },
+    {
+      "file": "terboo-smart-buttons.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2980,
+      "summary": "✅ terboo-smart-buttons: 11 — ui-descriptor · button-policy · kernel-clarification-buttons · kernel-no-buttons-when-unsafe · kernel-confirm-buttons · kernel-owner-button-hidden · cloud-tools-catalog · cloud-tools-central-permission · cloud-tool-decision · natural-cloud-requests · matrix-fresh",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ssh-agent.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 24693,
+      "summary": "✅ terboo-ssh-agent: register-secret-scrubbed · stranger-denied · natural-status · run-policy · zip-rejections · deploy-fail-fix-run · bad-fix-rolled-back · legacy-password-refused",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ssh.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 7481,
+      "summary": "✅ terboo-ssh: policy · register-encrypted · pin-before-auth · exec-read-quoted · write-needs-confirmation · real-exit-code-and-timeout · sftp-workspace-only · recipe-with-answers · password-host-redacted · host-key-change-refused · remove",
+      "reason": ""
+    },
+    {
+      "file": "terboo-task-resume.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 553,
+      "summary": "✅ terboo-task-resume: استئناف بعد إعادة التشغيل · رفض صادق للوسائط · ملكية · فشل صريح · تسليم نتيجة الإعادة · متابعة VPS",
+      "reason": ""
+    },
+    {
+      "file": "terboo-telegram-vps.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 1287,
+      "summary": "✅ terboo-telegram-vps: 12 — start-and-roles · group-chat-no-data · owner-wizard-assign-by-telegram-id · cross-platform-single-holder · buyer-dashboard-and-ownership · buyer-power-confirmed-once · hostname-and-password-secret · reinstall-and-watch · vnc-private-message · quick-assign-and-not-started · owner-find-suspend-cuts-access · token-never-leaks-and-polling",
+      "reason": ""
+    },
+    {
+      "file": "terboo-text-style.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 584,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-tool-registry.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 889,
+      "summary": "✅ terboo-tool-registry: one-registry · tool-search · kernel-instruction-limited · run-scraper-tool · run-local-tools · snapshot-clean",
+      "reason": ""
+    },
+    {
+      "file": "terboo-transport.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2927,
+      "summary": "✅ terboo-transport: all-kinds · interactive-kinds · invalid-falls-back · ui-presses:1000 · ui-matrix",
+      "reason": ""
+    },
+    {
+      "file": "terboo-typography.test.mjs",
+      "state": "FAIL",
+      "ok": false,
+      "ms": 559,
+      "summary": "",
+      "reason": ""
+    },
+    {
+      "file": "terboo-ui-intents.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2779,
+      "summary": "✅ terboo-ui-intents: قائمة+أزرار+بديل نصي · رؤوس فيديو/مستند/صورة · to+منشن · carousel · ping2 مُرحّل",
+      "reason": ""
+    },
+    {
+      "file": "terboo-virtualizor.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 845,
+      "summary": "✅ terboo-virtualizor: client · no-entitlement · owner-assign · isolation · capabilities-and-details · actions · revoke-and-expiry · matrix-and-policy",
+      "reason": ""
+    },
+    {
+      "file": "terboo-visual-response.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 5116,
+      "summary": "✅ terboo-visual-response: 929 أمر · HTML مؤهل 45 (ألعاب فقط، يُسلَّم hybrid) · تحقق يرفض الميت/غير المُدقَّق · تسليم موحّد · المصفوفة حديثة",
+      "reason": ""
+    },
+    {
+      "file": "terboo-vps-provisioner.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 7044,
+      "summary": "✅ terboo-vps-provisioner: 11 سيناريو — تحقق · preflight · مسار واتساب كامل · تكرار · رفض · خطأ بعد الوصول · مهلة · استئناف · غير المالك · القديم · الباقات",
+      "reason": ""
+    },
+    {
+      "file": "terboo-vpsadmin-center.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3618,
+      "summary": "✅ terboo-vpsadmin-center: 8 — dashboard · account-and-free · wizard-assign · one-command-assign-as-typed · cards-and-lists · group-goes-private · stranger-blocked · main-menu-buttons",
+      "reason": ""
+    },
+    {
+      "file": "terboo-web-arcade.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3077,
+      "summary": "✅ terboo-web-arcade: رمز موقّع · API (قبول/قديم/محظور/منتهٍ/منشأ/JSON) · صفحة اللعب + CSP · كتالوج 45 · رابط تلقائي/مالك · زر الخاص + رابط شخصي للمجموعة · .موقع (منفذ/رابط/SSL + HTTPS فعلي)",
+      "reason": ""
+    },
+    {
+      "file": "terboo-web-unchanged.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 196,
+      "summary": "✅ terboo-web-unchanged: WEB_FILES_UNCHANGED PASS · 18 ملف · الحارس يكشف تغييراً مدسوساً · طبقة النقل لا تلمس الموقع",
+      "reason": ""
+    },
+    {
+      "file": "terboo-website-button.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 3490,
+      "summary": "✅ terboo-website-button: بلا رابط · ar/en/es · 6 روابط مرفوضة · القوائم الفرعية · حالة المالك",
+      "reason": ""
+    },
+    {
+      "file": "terboo-website.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 2512,
+      "summary": "✅ terboo-website: عام+رؤوس أمان · دخول واتساب+جلسة HttpOnly · CSRF · لا ترقية بعلم العميل · owner-only · اجتياز المسار · خروج · أدوات/مهام · تحديد المعدّل",
+      "reason": ""
+    },
+    {
+      "file": "tiktoksearch.test.mjs",
+      "state": "PASS",
+      "ok": true,
+      "ms": 174,
+      "summary": "",
+      "reason": ""
+    }
+  ]
+}

@@ -7,8 +7,8 @@
     "ai": "the model proposes responseMode (text|buttons|confirm); resolveResponseMode decides; no button for a command the viewer cannot run"
   },
   "summary": {
-    "commands": 926,
-    "quickReply": 302,
+    "commands": 929,
+    "quickReply": 305,
     "select": 54,
     "confirm": 23,
     "afterTarget": 78,
@@ -10105,6 +10105,47 @@
       "expectedResponse": "text-or-card"
     },
     {
+      "command": "٢٠٤٨",
+      "category": "game",
+      "aliases": [
+        "2048",
+        "n2048",
+        "الفين_واربعين"
+      ],
+      "usage": ".٢٠٤٨",
+      "buttonType": "quick-reply",
+      "ui": {
+        "eligible": true,
+        "mode": "button",
+        "actionKind": "action",
+        "requiresText": false,
+        "requiresLink": false,
+        "requiresCode": false,
+        "requiresTarget": false,
+        "requiresMedia": false,
+        "requiresReply": false,
+        "destructive": false,
+        "freeForm": false,
+        "options": [],
+        "selectOptions": [],
+        "ownerOnly": false,
+        "adminOnly": false,
+        "premiumOnly": false,
+        "groupOnly": false,
+        "privateOnly": false,
+        "interactiveSafe": true,
+        "supportsQuickReply": true,
+        "supportsSelect": false,
+        "supportsConfirm": false,
+        "source": "derived"
+      },
+      "permission": "public",
+      "target": false,
+      "destructive": false,
+      "freeForm": false,
+      "expectedResponse": "text-or-card"
+    },
+    {
       "command": "fisht",
       "category": "game",
       "aliases": [
@@ -10623,6 +10664,47 @@
         "breakout"
       ],
       "usage": ".تحطيم_الطوب [@صديق|ai]",
+      "buttonType": "quick-reply",
+      "ui": {
+        "eligible": true,
+        "mode": "button",
+        "actionKind": "action",
+        "requiresText": false,
+        "requiresLink": false,
+        "requiresCode": false,
+        "requiresTarget": false,
+        "requiresMedia": false,
+        "requiresReply": false,
+        "destructive": false,
+        "freeForm": false,
+        "options": [],
+        "selectOptions": [],
+        "ownerOnly": false,
+        "adminOnly": false,
+        "premiumOnly": false,
+        "groupOnly": false,
+        "privateOnly": false,
+        "interactiveSafe": true,
+        "supportsQuickReply": true,
+        "supportsSelect": false,
+        "supportsConfirm": false,
+        "source": "derived"
+      },
+      "permission": "public",
+      "target": false,
+      "destructive": false,
+      "freeForm": false,
+      "expectedResponse": "text-or-card"
+    },
+    {
+      "command": "ثعبان_مصغر",
+      "category": "game",
+      "aliases": [
+        "snakemini",
+        "minisnake",
+        "ثعبان مصغر"
+      ],
+      "usage": ".ثعبان_مصغر",
       "buttonType": "quick-reply",
       "ui": {
         "eligible": true,
@@ -11493,6 +11575,47 @@
         "memorymatch"
       ],
       "usage": ".ذاكرة_البطاقات [@صديق|ai]",
+      "buttonType": "quick-reply",
+      "ui": {
+        "eligible": true,
+        "mode": "button",
+        "actionKind": "action",
+        "requiresText": false,
+        "requiresLink": false,
+        "requiresCode": false,
+        "requiresTarget": false,
+        "requiresMedia": false,
+        "requiresReply": false,
+        "destructive": false,
+        "freeForm": false,
+        "options": [],
+        "selectOptions": [],
+        "ownerOnly": false,
+        "adminOnly": false,
+        "premiumOnly": false,
+        "groupOnly": false,
+        "privateOnly": false,
+        "interactiveSafe": true,
+        "supportsQuickReply": true,
+        "supportsSelect": false,
+        "supportsConfirm": false,
+        "source": "derived"
+      },
+      "permission": "public",
+      "target": false,
+      "destructive": false,
+      "freeForm": false,
+      "expectedResponse": "text-or-card"
+    },
+    {
+      "command": "ذاكرة_مصغرة",
+      "category": "game",
+      "aliases": [
+        "memorymini",
+        "minimemory",
+        "ذاكرة مصغرة"
+      ],
+      "usage": ".ذاكرة_مصغرة",
       "buttonType": "quick-reply",
       "ui": {
         "eligible": true,

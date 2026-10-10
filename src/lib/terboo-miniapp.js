@@ -26,8 +26,12 @@ import { noteFailure } from "./terboo-failure-log.js";
 import { validateTemplate } from "./terboo-html-game.js";
 import { publicBaseUrl, link } from "./terboo-website.js";
 import { sendCard } from "./terboo-ui-kit.js";
+import { nativeCapability, sendMiniApp } from "./terboo-miniapp-transport.js";
 import { buildSonicRunnerHtml } from "./miniapps/sonic-runner.js";
 import { buildTicTacToeHtml } from "./miniapps/xo.js";
+import { buildSnakeHtml } from "./miniapps/snake.js";
+import { buildMemoryHtml } from "./miniapps/memory.js";
+import { build2048Html } from "./miniapps/n2048.js";
 
 /** حد الحجم لصفحة مستقلة تُخدم عبر HTTPS (ليس حد رسالة) */
 const MAX_APP_BYTES = 256 * 1024;
@@ -49,6 +53,24 @@ const MINI_APPS = new Map([
     blurb: { ar: "ضد الكمبيوتر بثلاث مستويات", en: "vs the computer, three levels", es: "contra la maquina, tres niveles" },
     category: "board", height: 640,
   }],
+  ["snake", {
+    id: "snake", icon: "🐍", build: buildSnakeHtml,
+    name: { ar: "ثعبان الشبكة", en: "Grid Snake", es: "Serpiente" },
+    blurb: { ar: "اسحب لتوجيه الثعبان وكُل بلا أن تلمس نفسك", en: "Swipe to steer, eat without biting yourself", es: "Desliza para girar y come sin morderte" },
+    category: "arcade", height: 760,
+  }],
+  ["memory", {
+    id: "memory", icon: "🧠", build: buildMemoryHtml,
+    name: { ar: "الذاكرة", en: "Memory Match", es: "Memoria" },
+    blurb: { ar: "ثمانية أزواج · اقلب واحفظ", en: "Eight pairs · flip and remember", es: "Ocho pares · voltea y recuerda" },
+    category: "puzzle", height: 700,
+  }],
+  ["n2048", {
+    id: "n2048", icon: "🔢", build: build2048Html,
+    name: { ar: "٢٠٤٨", en: "2048", es: "2048" },
+    blurb: { ar: "اسحب لدمج الأرقام حتى 2048", en: "Swipe to merge numbers up to 2048", es: "Combina numeros hasta 2048" },
+    category: "puzzle", height: 700,
+  }],
 ]);
 
 const LANGS = new Set(["ar", "en", "es"]);
@@ -66,15 +88,12 @@ const miniApps = () => [...MINI_APPS.values()];
  * تُفحص في كل استدعاء ولا تُفترض. تعيد سبباً صريحاً عند عدم التوفر.
  * @returns {{available:boolean, channel:string, reason:string}}
  */
-function nativeTransport() {
-  // الإصدار الرسمي المثبّت لا يملك هذه الواجهة أصلاً
-  // البيئة أولاً ثم الإعداد — نفس أسبقية resolveHtmlTransport وكتلة secrets،
-  // وإلا حجبت قيمة الإعداد (التي تُقرأ مرة عند التحميل) أي تغيير لاحق في البيئة.
-  const configured = String(process.env.TERBOO_NATIVE_MINIAPP || config.arcade?.html?.nativeTransport || "off").trim().toLowerCase();
-  if (configured !== "on") {
-    return { available: false, channel: "none", reason: "native-transport-disabled" };
-  }
-  return { available: false, channel: "none", reason: "requires-forged-bot-verification" };
+function nativeTransport(sock = null) {
+  // مصدر الحقيقة الوحيد هو طبقة النقل: القدرة تُحسب من دالة إرسال حقيقية
+  // وبروتو مُختبَر، لا من قيمة إعداد. هذا الغلاف للمستدعين السابقين فقط،
+  // ويعمل بلا مقبس فيعلن السبب `socket-has-no-relay` بدل ادّعاء التوفّر.
+  const { available, channel, reason } = nativeCapability(sock);
+  return { available, channel, reason };
 }
 
 /**
@@ -120,24 +139,49 @@ async function deliverMiniApp(sock, m, id, { lang = "ar" } = {}) {
   const l = langOf(lang);
   if (!app) return { ok: false, channel: "none", code: "unknown-mini-app" };
 
-  // 1) القناة المضمَّنة — تُفحص أولاً دائماً، وتُستعمل فور توفّرها بشكل مشروع
-  const native = nativeTransport();
-  // `available` وحده لا يكفي: القناة يجب أن تقدّم دالة إرسال فعلية، وإلا فهي وصف لا نقل.
-  if (native.available && typeof native.send === "function") {
+  // ── القناة المضمَّنة: تجربة اللعبة داخل الرسالة نفسها ──
+  const capability = nativeCapability(sock);
+  if (capability.available) {
     const built = renderMiniApp(id, { lang: l });
-    if (built.ok) {
-      try {
-        const sent = await native.send(sock, m.chat, built.html, { title: app.name[l], height: app.height });
-        if (sent?.relayed) return { ok: true, channel: native.channel };
-        noteFailure("miniapp", new Error(sent?.reason || "native-relay-failed"), { where: "terboo-miniapp:deliverMiniApp", stage: id, fallback: "web-mini-app" });
-      } catch (error) {
-        noteFailure("miniapp", error, { where: "terboo-miniapp:deliverMiniApp", stage: id, fallback: "web-mini-app" });
-      }
+    if (!built.ok) {
+      noteFailure("miniapp", new Error(`build:${built.code}`), { where: "terboo-miniapp:deliverMiniApp", stage: id, fallback: "text" });
+      await m.reply(TEXT[l].buildFailed);
+      return { ok: false, channel: "none", code: built.code };
     }
+    const sent = await sendMiniApp(sock, m.chat, built.html, {
+      title: app.name[l],
+      label: `${app.icon} ${app.name[l]}`,
+      height: app.height,
+      appId: app.id,
+    });
+    if (sent.ok) {
+      // رسالة واحدة فقط. لا بطاقة ولا أزرار ولا صورة بعدها.
+      // `renderVerified: false` دائماً: نجاح الإرسال ليس إثباتاً للعرض.
+      return { ok: true, channel: sent.channel, renderVerified: false, messageId: sent.messageId };
+    }
+    // فشل النقل ⇒ سبب صريح. لا رابط موقع ولا أزرار حركة بديلاً (§5.2).
+    await m.reply(`${TEXT[l].relayFailed}\n> ${sent.reason}`);
+    return { ok: false, channel: "none", code: sent.reason };
   }
 
-  // 2) صفحة Mini App على HTTPS — نفس HTML، تفاعل كامل باللمس، رسالة واحدة
-  const url = miniAppUrl(id, { lang: l });
+  // ── القناة غير متاحة ──
+  // مفتاح منفصل وصريح للسلوك القديم (بطاقة برابط الموقع). مطفأ افتراضياً،
+  // واسمه يقول ما هو: **ليس** Mini App ولا جزءاً من المسار المطلوب، بل
+  // مخرج يملكه المالك حتى لا تُفقد وظيفة عاملة بلا قراره.
+  if (String(process.env.TERBOO_MINIAPP_WEB_LINK || config.arcade?.html?.legacyWebLink || "off").toLowerCase() === "on") {
+    return deliverLegacyWebLink(sock, m, app, l);
+  }
+
+  await m.reply(`${TEXT[l].noTransport}\n> ${capability.reason}`);
+  return { ok: false, channel: "none", code: capability.reason };
+}
+
+/**
+ * السلوك القديم: بطاقة واحدة برابط صفحة اللعب على موقع المالك.
+ * ليس Mini App مضمَّناً، ولا يُستدعى إلا بتفعيل المالك الصريح.
+ */
+async function deliverLegacyWebLink(sock, m, app, l) {
+  const url = miniAppUrl(app.id, { lang: l });
   if (!url) {
     await m.reply(TEXT[l].noSite);
     return { ok: false, channel: "none", code: "no-public-site" };
@@ -149,27 +193,34 @@ async function deliverMiniApp(sock, m, id, { lang = "ar" } = {}) {
       text: `${app.icon} *${app.name[l]}*\n${app.blurb[l]}\n\n${TEXT[l].open}`,
       footer: TEXT[l].footer,
       links: [{ text: TEXT[l].play, url }],
-      // لا buttons ولا select: لا أزرار حركة في واتساب لهذه الألعاب
     });
-    return { ok: true, channel: "web-mini-app", url };
+    return { ok: true, channel: "legacy-web-link", url };
   } catch (error) {
-    noteFailure("miniapp", error, { where: "terboo-miniapp:deliverMiniApp", stage: `${id}:card`, fallback: "text" });
-    // فشل النقل ⇒ نص واضح فقط. لا صورة، ولا أزرار حركة، ولا إعادة محاولة صامتة.
+    noteFailure("miniapp", error, { where: "terboo-miniapp:deliverLegacyWebLink", stage: `${app.id}:card`, fallback: "text" });
     try { await m.reply(`${app.icon} ${app.name[l]}\n${url}`); } catch (inner) {
-      noteFailure("miniapp", inner, { where: "terboo-miniapp:deliverMiniApp", stage: `${id}:text`, fallback: "none" });
+      noteFailure("miniapp", inner, { where: "terboo-miniapp:deliverLegacyWebLink", stage: `${app.id}:text`, fallback: "none" });
       return { ok: false, channel: "none", code: "send-failed" };
     }
-    return { ok: true, channel: "text-link", url };
+    return { ok: true, channel: "legacy-text-link", url };
   }
 }
 
 const TEXT = {
   ar: { play: "🎮 افتح اللعبة", open: "اضغط الزر لفتح اللعبة التفاعلية — اللعب باللمس داخل الصفحة.",
-        footer: "TERBOO ARCADE", noSite: "⚠️ اللعبة تحتاج موقع البوت مفعّلاً.\n> المالك: فعّله بـ«.موقع تشغيل» واضبط الرابط العام." },
+        footer: "TERBOO ARCADE", noSite: "⚠️ اللعبة تحتاج موقع البوت مفعّلاً.\n> المالك: فعّله بـ«.موقع تشغيل» واضبط الرابط العام.",
+        noTransport: "⚠️ *تجربة اللعبة داخل الرسالة غير متاحة.*\nلا توجد قناة نقل مشروعة لعرض HTML في فقاعة واتساب: القناة الوحيدة المعروفة تتطلّب تلفيق إثبات تحقق Meta، وهو مرفوض.",
+        relayFailed: "⚠️ *تعذّر إرسال اللعبة كتجربة HTML داخل الرسالة.*\nلم تُرسل بطاقة ولا رابط بديلاً — السبب مسجَّل:",
+        buildFailed: "⚠️ *تعذّر بناء مستند اللعبة.* لم تُرسل بطاقة ولا رابط بديلاً، والسبب مسجَّل في سجل الإخفاقات." },
   en: { play: "🎮 Open the game", open: "Tap to open the interactive game — play by touch inside the page.",
-        footer: "TERBOO ARCADE", noSite: "⚠️ This game needs the bot website enabled.\n> Owner: enable it and set the public URL." },
+        footer: "TERBOO ARCADE", noSite: "⚠️ This game needs the bot website enabled.\n> Owner: enable it and set the public URL.",
+        noTransport: "⚠️ *In-message game experience is unavailable.*\nThere is no legitimate channel for rendering HTML inside a WhatsApp bubble: the only known one requires forging Meta verification proof, which is refused.",
+        relayFailed: "⚠️ *Could not send the game as an in-message HTML experience.*\nNo card and no link were sent instead — the reason is logged:",
+        buildFailed: "⚠️ *Could not build the game document.* No card and no link were sent instead; the reason is in the failure log." },
   es: { play: "🎮 Abrir el juego", open: "Pulsa para abrir el juego interactivo — se juega tocando la pagina.",
-        footer: "TERBOO ARCADE", noSite: "⚠️ Este juego necesita el sitio del bot activo.\n> Dueño: actívalo y define la URL publica." },
+        footer: "TERBOO ARCADE", noSite: "⚠️ Este juego necesita el sitio del bot activo.\n> Dueño: actívalo y define la URL publica.",
+        noTransport: "⚠️ *La experiencia del juego dentro del mensaje no esta disponible.*\nNo hay canal legitimo para mostrar HTML en una burbuja de WhatsApp: el unico conocido exige falsificar la prueba de verificacion de Meta, y se rechaza.",
+        relayFailed: "⚠️ *No se pudo enviar el juego como experiencia HTML dentro del mensaje.*\nNo se envio ninguna tarjeta ni enlace en su lugar — el motivo queda registrado:",
+        buildFailed: "⚠️ *No se pudo construir el documento del juego.* No se envio tarjeta ni enlace; el motivo esta en el registro de fallos." },
 };
 
-export { MAX_APP_BYTES, MINI_APPS, deliverMiniApp, hasMiniApp, miniApp, miniAppUrl, miniApps, nativeTransport, renderMiniApp };
+export { MAX_APP_BYTES, MINI_APPS, deliverMiniApp, hasMiniApp, miniApp, miniAppUrl, miniApps, nativeCapability, nativeTransport, renderMiniApp };

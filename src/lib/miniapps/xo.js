@@ -34,7 +34,10 @@ const CSS = [
   "color:var(--muted);font-weight:800;font-size:13px}",
   ".lv[aria-pressed=true]{color:#fff;border-color:color-mix(in srgb,var(--acc) 60%,transparent);",
   "background:linear-gradient(150deg,color-mix(in srgb,var(--acc) 48%,#16122c),#15122a)}",
-  ".board{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px;aspect-ratio:1}",
+    // مربّعة بحيلة padding المئوي لا بـaspect-ratio: الأخيرة تربط الارتفاع بالعرض
+  // فيظل المضيف والصفحة يتقايسان ولا يستقر الارتفاع.
+  ".board-fit{position:relative;width:100%;padding-top:100%}",
+  ".board{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px;padding:8px}",
   ".cell{display:grid;place-items:center;border:0;border-radius:14px;font-size:clamp(34px,13vw,64px);font-weight:900;",
   "background:linear-gradient(145deg,#1b2740,#121a2c);box-shadow:inset 0 2px rgba(255,255,255,.07),0 5px 0 rgba(0,0,0,.26);",
   "color:#fff;min-height:0;transition:transform .1s,filter .1s;touch-action:manipulation}",
@@ -75,7 +78,7 @@ function buildTicTacToeHtml(lang = "ar", { nonce = "" } = {}) {
   <button class="lv" type="button" data-lv="normal" aria-pressed="true">${esc(t.normal)}</button>
   <button class="lv" type="button" data-lv="hard" aria-pressed="false">${esc(t.hard)}</button>
 </div>
-<section class="panel"><div class="panel-in"><div class="board" id="board">${cells}<i class="line" id="line" style="width:0"></i></div></div></section>
+<section class="panel"><div class="panel-in"><div class="board-fit"><div class="board" id="board">${cells}<i class="line" id="line" style="width:0"></i></div></div></div></section>
 <div class="turn" id="turn">${esc(t.yourTurn)}</div>
 <div class="bottom">
   <p class="hint">${esc(t.hint)}<br><small>${esc(t.local)}</small></p>
