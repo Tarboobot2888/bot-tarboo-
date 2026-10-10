@@ -8,13 +8,15 @@
    "buttons": 310,
    "media": 91,
    "hybrid": 4,
-   "html": 47
+   "html": 45,
+   "mini-app": 2
   },
   "delivered": {
    "text": 474,
    "buttons": 310,
    "media": 91,
-   "hybrid": 51
+   "hybrid": 49,
+   "mini-app": 2
   },
   "htmlEligible": 45
  },
@@ -2835,15 +2837,16 @@
   {
    "command": "اكس_او_مصغر",
    "category": "game",
-   "mode": "html",
-   "delivered": "hybrid",
+   "mode": "mini-app",
+   "delivered": "mini-app",
    "htmlEligible": false,
    "reasons": [
-    "declared:config.visual",
-    "bridge:no-proven-client-channel",
-    "html-transport:off"
+    "mini-app:xo",
+    "single-message",
+    "no-action-buttons",
+    "no-image"
    ],
-   "fallback": "text+typed-commands"
+   "fallback": "text+link"
   },
   {
    "command": "الثعبان_الذهبي",
@@ -3273,15 +3276,16 @@
   {
    "command": "سونك",
    "category": "game",
-   "mode": "html",
-   "delivered": "hybrid",
+   "mode": "mini-app",
+   "delivered": "mini-app",
    "htmlEligible": false,
    "reasons": [
-    "declared:config.visual",
-    "bridge:no-proven-client-channel",
-    "html-transport:off"
+    "mini-app:sonic",
+    "single-message",
+    "no-action-buttons",
+    "no-image"
    ],
-   "fallback": "text+typed-commands"
+   "fallback": "text+link"
   },
   {
    "command": "فحص_عراف",

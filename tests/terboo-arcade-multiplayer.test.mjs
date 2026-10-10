@@ -153,15 +153,33 @@ r = await say(B, ".ثعبان_وسلم بدء");
 assert.match(r.text, /للمضيف فقط/, "البدء للمضيف فقط");
 r = await say(A, ".ثعبان_وسلم بدء");
 assert.equal(ut.state, "PLAYING");
-let rolls = 0;
-while (ut.state === "PLAYING" && rolls < 1500) {
+// مسار الإدخال (نص «ارمي» + زر) يُختبر على عدد صغير من الرميات.
+// إكمال المباراة لا يمر بمعالج الرسائل: `globalLoadLimiter` في handler.js يسمح
+// بـ100 رسالة/دقيقة **للبوت بالكامل**، فإغراقه بـ1500 رمية يُسقط ~93% منها
+// («البوت يواجه ضغطاً كبيراً») وتصبح نتيجة الاختبار رهن سرعة معالجة الرسالة
+// لا قواعد اللعبة — وهو ما جعله يفشل متقطّعاً. القواعد تُختبر على المحرك مباشرة.
+let rolls = 0, viaMessage = 0;
+for (let i = 0; i < 12 && ut.state === "PLAYING"; i += 1) {
   const jid = ut.players[ut.game.turn].jid;
-  // معظم الرميات مكتوبة، وكل عاشرة بالزر (حد معدّل الأوامر الحقيقي 8 أوامر/3 ثوانٍ لكل لاعب)
-  if (rolls % 10) await say(jid, "ارمي");
+  const posBefore = ut.game.pos.join(",");
+  if (i % 4) await say(jid, "ارمي");
   else {
     const view = engine.getView(ut.roomId);
     await say(jid, "", { button: `.اركيد a ${ut.roomId} ${view.nonce} 0` });
   }
+  rolls += 1;
+  if (ut.game.pos.join(",") !== posBefore) viaMessage += 1;
+}
+assert.ok(viaMessage > 0, `مسار الرسائل نفّذ رميات فعلاً (${viaMessage}/${rolls})`);
+
+// إكمال المباراة عبر المحرك: نفس التحقق ونفس القواعد، بلا حد الإنتاجية العام
+while (ut.state === "PLAYING" && rolls < 1500) {
+  const seat = ut.game.turn;
+  const res = await engine.applyAction({
+    gameId: ut.gameId, sessionId: ut.sessionId, actionId: "roll",
+    actor: ut.players[seat].id, timestamp: Date.now(), payload: null, source: "text",
+  });
+  assert.ok(res.ok || ["finished", "not-your-turn"].includes(res.code), `رمية المحرك مقبولة (${res.code || "ok"})`);
   rolls += 1;
 }
 assert.equal(ut.state, "FINISHED", `انتهت بعد ${rolls} رمية`);

@@ -26,6 +26,21 @@ const BASE = "de88a8c";
 const REF = args.includes("--ref") ? args[args.indexOf("--ref") + 1] : args.includes("--final") ? null : BASE;
 
 const git = (...a) => execFileSync("git", a, { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+
+// خط الأساس التاريخي يعيش في مستودع المشروع الأصلي. هذه النسخة تبدأ من لقطة مدمجة،
+// فالـcommit غير موجود هنا. نقولها صراحةً بدل أثر استدعاء git، ولا نستبدله بشجرة
+// العمل بصمت: ذلك ينتج مستنداً مختلفاً تحت عنوان يزعم أنه «ما قبل ARCADE».
+if (REF) {
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${REF}^{commit}`], { cwd: ROOT, stdio: "pipe" });
+  } catch {
+    console.error(`❌ خط الأساس «${REF}» غير موجود في هذا المستودع.`);
+    console.error("   • الفحص الجنائي التاريخي (المرحلة 0) يُعاد توليده في مستودع المشروع الأصلي وحده.");
+    console.error("   • للحالة الراهنة:      node tools/terboo-game-audit.mjs --final");
+    console.error("   • لخط أساس آخر:        node tools/terboo-game-audit.mjs --ref <commit>");
+    process.exit(2);
+  }
+}
 /** يقرأ ملفاً من الشجرة الحالية أو من commit مرجعي */
 function read(file) {
   if (!REF) return fs.readFileSync(file, "utf8");

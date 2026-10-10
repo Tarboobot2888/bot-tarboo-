@@ -35,6 +35,20 @@ assert.equal(meta("ساحة_المعلومات").mode, "html", "أسئلة ال�
 // رُحّلت إلى عقد أركيد q_tebakbendera ⇒ Mini App تفاعلية لا بطاقة تلميح/استسلام
 assert.equal(meta("خمن_العلم").mode, "html", "لعبة الأسئلة المُرحَّلة صارت Mini App");
 for (const legacy of ["مستذئب", "دنجن", "نينجا"]) assert.equal(meta(legacy).mode, "hybrid", legacy);
+// ألعاب Mini App المستقلة: الوضع المعلن يجب أن يطابق التسليم الفعلي حرفياً —
+// رسالة واحدة برابط واحد. «hybrid» هنا كان سيعني أزرار حركة في واتساب، وهي غير موجودة.
+for (const [cmd, app] of [["سونك", "sonic"], ["اكس_او_مصغر", "xo"]]) {
+  const row = meta(cmd);
+  assert.equal(row.mode, "mini-app", `${cmd}: الوضع mini-app`);
+  assert.equal(row.delivered, "mini-app", `${cmd}: التسليم mini-app لا hybrid`);
+  assert.equal(row.htmlEligible, false, `${cmd}: لا نقل HTML داخل الرسالة`);
+  assert.ok(row.reasons.includes(`mini-app:${app}`), `${cmd}: السبب يسمّي اللعبة`);
+  for (const reason of ["single-message", "no-action-buttons", "no-image"]) {
+    assert.ok(row.reasons.includes(reason), `${cmd}: ${reason}`);
+  }
+}
+// اسم لعبة غير مسجّل لا يمنح الوضع: المرجع هو السجل لا نص البلوقن
+assert.equal(V.visualMetadata("__لا_يوجد__").mode, "text");
 const rows = V.visualMatrix();
 assert.ok(rows.length > 500, `كل الأوامر الحية: ${rows.length}`);
 const htmlRows = rows.filter((r) => r.htmlEligible);

@@ -68,7 +68,9 @@ const miniApps = () => [...MINI_APPS.values()];
  */
 function nativeTransport() {
   // الإصدار الرسمي المثبّت لا يملك هذه الواجهة أصلاً
-  const configured = String(config.arcade?.html?.nativeTransport || process.env.TERBOO_NATIVE_MINIAPP || "off").toLowerCase();
+  // البيئة أولاً ثم الإعداد — نفس أسبقية resolveHtmlTransport وكتلة secrets،
+  // وإلا حجبت قيمة الإعداد (التي تُقرأ مرة عند التحميل) أي تغيير لاحق في البيئة.
+  const configured = String(process.env.TERBOO_NATIVE_MINIAPP || config.arcade?.html?.nativeTransport || "off").trim().toLowerCase();
   if (configured !== "on") {
     return { available: false, channel: "none", reason: "native-transport-disabled" };
   }
@@ -120,7 +122,8 @@ async function deliverMiniApp(sock, m, id, { lang = "ar" } = {}) {
 
   // 1) القناة المضمَّنة — تُفحص أولاً دائماً، وتُستعمل فور توفّرها بشكل مشروع
   const native = nativeTransport();
-  if (native.available) {
+  // `available` وحده لا يكفي: القناة يجب أن تقدّم دالة إرسال فعلية، وإلا فهي وصف لا نقل.
+  if (native.available && typeof native.send === "function") {
     const built = renderMiniApp(id, { lang: l });
     if (built.ok) {
       try {

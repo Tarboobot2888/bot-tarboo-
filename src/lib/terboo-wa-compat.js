@@ -38,6 +38,7 @@ import config from "../../config.js";
 import { channelContext } from "./terboo-brand.js";
 import { sendRich } from "./terboo-code-renderer.js";
 import { detectLanguage } from "./terboo-rich-response.js";
+import { redactSecrets } from "./terboo-secrets.js";
 
 const log = (scope, error) => console.warn(`[WACompat] ${scope}: ${String(error?.message || error).slice(0, 200)}`);
 
@@ -45,8 +46,12 @@ const log = (scope, error) => console.warn(`[WACompat] ${scope}: ${String(error?
 const JUNK_TEXT = /^[\s\u2060-\u2064]*(?:\[object \w+\]|undefined|null)[\s\u2060-\u2064]*$/;
 
 /**
- * الحارس الأخير قبل واتساب: text/caption يجب أن تكون نصاً حقيقياً.
+ * الحارس الأخير قبل واتساب: text/caption يجب أن تكون نصاً حقيقياً **وبلا أسرار**.
  * كائن ⇒ يُستخرج نصه ({text|answer|content|message}) · نص فارغ المعنى ⇒ لا يُرسل (يُسجَّل بدل إرسال «[object Object]»).
+ *
+ * الإخفاء هنا بـ`generic: false` عن قصد: يُخفي الأسرار المسجّلة وتوكنات اللوحات
+ * وحدها، ولا يطبّق الأنماط العامة (`password: "..."`) حتى لا تُشوَّه أمثلة الكود
+ * التي يرسلها البوت. هذه آخر نقطة قبل الشبكة، فما يفلت منها يصل للمستخدم.
  * @returns {Object|null} المحتوى المصحَّح، أو null إن لم يبقَ ما يُرسل
  */
 function guardContentText(content) {
@@ -69,6 +74,16 @@ function guardContentText(content) {
       if (key === "text") return null;
       out = { ...out, caption: "" };
     } else out = { ...out, [key]: inner };
+  }
+  // الإخفاء بعد التصحيح: النص المستخرَج من كائن يمر به أيضاً
+  for (const key of ["text", "caption"]) {
+    const value = out[key];
+    if (typeof value !== "string" || !value) continue;
+    const safe = redactSecrets(value, { generic: false });
+    if (safe !== value) {
+      log("text-guard", new Error(`redacted_secret:${key}`));
+      out = { ...out, [key]: safe };
+    }
   }
   return out;
 }

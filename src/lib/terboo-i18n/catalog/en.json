@@ -15072,5 +15072,9 @@
  "خمّن الكلمة العربية من 5 حروف في 6 محاولات": "Guess the 5-letter Arabic word in 6 tries",
  "TERBOO ARCADE": "TERBOO ARCADE",
  "TERBOO ARCADE · HTML": "TERBOO ARCADE · HTML",
- "التحكم في موقع البوت: الرابط (أو IP السيرفر تلقائياً) والمنفذ والتشغيل وشهادة SSL": "Control the bot website: link (or automatic server IP), port, start/stop and SSL certificate"
+ "التحكم في موقع البوت: الرابط (أو IP السيرفر تلقائياً) والمنفذ والتشغيل وشهادة SSL": "Control the bot website: link (or automatic server IP), port, start/stop and SSL certificate",
+ "إكس أو تفاعلية ضد الكمبيوتر بثلاث مستويات": "Interactive Tic Tac Toe vs the computer, three levels",
+ "لعبة جري تفاعلية باللمس داخل صفحة Mini App": "Touch-based endless runner inside a Mini App page",
+ "الأمر غير مهيّأ": "Command not configured",
+ "اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.": "Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_AI_TOKEN in the environment."
 }

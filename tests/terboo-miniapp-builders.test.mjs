@@ -68,8 +68,13 @@ for (const b of BUILDERS) {
   assert.notEqual(ar, en, `${b.id}: ar ≠ en`);
   assert.notEqual(en, es, `${b.id}: en ≠ es`);
   assert.match(ar, /[؀-ۿ]/, `${b.id}: العربية فيها نص عربي`);
-  const enBody = en.replace(/<script[\s\S]*?<\/script>/g, "");
-  assert.doesNotMatch(enBody, /[؀-ۿ]/, `${b.id}: الإنجليزية بلا نص عربي في الواجهة`);
+  // واجهة كل لغة من قاموس COPY في نفس الملف. هذا الحارس هو ما يبرّر استثناء
+  // src/lib/miniapps/ من مستخرج الترجمة: الكتالوج لا يملك نصوص هذه الصفحات،
+  // فالإثبات هنا — لا نص عربي في واجهة الإنجليزية ولا الإسبانية.
+  const uiOf = (html) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "");
+  for (const [lang, html] of [["en", en], ["es", es]]) {
+    assert.doesNotMatch(uiOf(html), /[؀-ۿ]/, `${b.id}/${lang}: واجهة بلا نص عربي`);
+  }
   // nonce
   const withNonce = b.build("ar", { nonce: "TESTNONCE" });
   assert.match(withNonce, /<script nonce="TESTNONCE">/, `${b.id}: nonce في وسم السكربت`);

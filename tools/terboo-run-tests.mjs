@@ -63,13 +63,39 @@ function run(file) {
   });
 }
 
+/**
+ * حالة الملف الواحد: PASS · FAIL · BLOCKED.
+ * BLOCKED = شُغّل وخرج بـ0 لكنه أعلن تخطّياً («⏭️») لانعدام شرط بيئي (متصفح · مفتاح).
+ * لا يُحتسب ناجحاً: اختبار لم يفحص شيئاً ليس اختباراً ناجحاً (§19).
+ */
+function stateOf(result) {
+  if (!result.ok) return "FAIL";
+  const out = `${result.stdout}\n${result.stderr}`;
+  const skipped = /^\s*⏭/m.test(out);
+  const asserted = /^✅/m.test(out);
+  return skipped && !asserted ? "BLOCKED" : "PASS";
+}
+
 const failed = [];
+const blocked = [];
 const report = [];
 for (const file of files) {
   const result = await run(file);
-  report.push({ file, ok: result.ok, ms: result.ms, summary: (result.stdout.match(/^✅.*$/m) || [""])[0].slice(0, 400) });
+  const state = stateOf(result);
+  const skipLine = (`${result.stdout}\n${result.stderr}`.match(/^\s*⏭.*$/m) || [""])[0].trim();
+  report.push({
+    file,
+    state,
+    ok: state === "PASS",
+    ms: result.ms,
+    summary: (result.stdout.match(/^✅.*$/m) || [""])[0].slice(0, 400),
+    reason: state === "BLOCKED" ? skipLine.slice(0, 300) : "",
+  });
   const seconds = (result.ms / 1000).toFixed(1);
-  if (result.ok) {
+  if (state === "BLOCKED") {
+    blocked.push({ file, reason: skipLine });
+    console.log(`  ⏭ ${file} (${seconds}s) — BLOCKED: ${skipLine.replace(/^⏭️?\s*/, "").slice(0, 90)}`);
+  } else if (result.ok) {
     console.log(`  ✓ ${file} (${seconds}s)`);
   } else {
     failed.push(result);
@@ -82,8 +108,10 @@ for (const file of files) {
 fs.rmSync(SANDBOX, { recursive: true, force: true });
 // السطر صريح: الناجح · الفاشل · live غير المُشغَّل — لا خلط بين «فشل» و«لم يُشغَّل»
 const skippedLive = ONLY ? [...LIVE].filter((name) => name.includes(ONLY)).length : LIVE.size;
-console.log(`\n${files.length - failed.length}/${files.length} اختبار محلي نجح · ${failed.length} فشل${skippedLive ? ` · ${skippedLive} اختبار live لم يُشغَّل (npm run test:live)` : ""}`);
+const passedCount = report.filter((r) => r.state === "PASS").length;
+console.log(`\n${passedCount}/${files.length} اختبار محلي نجح · ${failed.length} فشل · ${blocked.length} مُعطَّل بالبيئة (BLOCKED)${skippedLive ? ` · ${skippedLive} اختبار live لم يُشغَّل (npm run test:live)` : ""}`);
+for (const b of blocked) console.log(`   ⏭ ${b.file}: ${b.reason.replace(/^⏭️?\s*/, "")}`);
 if (JSON_OUT) {
-  fs.writeFileSync(JSON_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), node: process.version, total: files.length, passed: files.length - failed.length, failed: failed.length, skipped: skippedLive, blocked: 0, results: report }, null, 2));
+  fs.writeFileSync(JSON_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), node: process.version, total: files.length, passed: passedCount, failed: failed.length, blocked: blocked.length, notRun: skippedLive, skipped: skippedLive, results: report }, null, 2));
 }
 process.exit(failed.length ? 1 : 0);

@@ -17,8 +17,9 @@ import { games } from "./terboo-games.js";
 import { ACTION_BRIDGE, encodeTransport, relayTransport, resolveHtmlTransport, validateTemplate } from "./terboo-html-game.js";
 import { noteFailure } from "./terboo-failure-log.js";
 import { sendCard } from "./terboo-ui-kit.js";
+import { hasMiniApp } from "./terboo-miniapp.js";
 
-const VISUAL_MODES = Object.freeze(["html", "hybrid", "buttons", "media", "text"]);
+const VISUAL_MODES = Object.freeze(["mini-app", "html", "hybrid", "buttons", "media", "text"]);
 /**
  * بادئات معرّفات بطاقات الألعاب. أي VisualResponse بأحدها **يُمنع** من حمل صورة.
  * الحارس مقيَّد بالألعاب حتى لا يمس الملصقات والتنزيلات وبطاقات canvas العامة.
@@ -62,6 +63,20 @@ function visualMetadata(command) {
   let mode = "text";
   let htmlEligible = false;
   const game = gameOf(name);
+  // ألعاب Mini App المستقلة: مسار تسليم خاص بها (deliverMiniApp) لا يمر من هنا.
+  // تُعلن كما هي فعلاً: رسالة واحدة · رابط واحد · بلا أزرار حركة · بلا صورة.
+  // المرجع هو سجل الألعاب المستقلة لا نص البلوقن، فاسم خاطئ لا يُنتج وضعاً خاطئاً.
+  if (plugin?.config?.miniApp && hasMiniApp(plugin.config.miniApp)) {
+    return {
+      command: name,
+      category: plugin.config.category || null,
+      mode: "mini-app",
+      delivered: "mini-app",
+      htmlEligible: false,
+      reasons: [`mini-app:${plugin.config.miniApp}`, "single-message", "no-action-buttons", "no-image"],
+      fallback: "text+link",
+    };
+  }
   if (declared?.mode && VISUAL_MODES.includes(declared.mode)) {
     mode = declared.mode;
     reasons.push("declared:config.visual");

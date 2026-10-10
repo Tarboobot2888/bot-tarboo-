@@ -237,7 +237,15 @@ const config = {
     // نقل HTML داخل رسالة واتساب: "off" (افتراضي) أو "rich".
     // تصيير هذا العنصر على WhatsApp Android غير مُثبت، فلا يُفعَّل تلقائياً.
     // تجربة اللعب التفاعلية الحقيقية هي Mini App الويب على /play/<token>.
-    html: { transport: process.env.TERBOO_ARCADE_HTML || "off" },
+    html: {
+      transport: process.env.TERBOO_ARCADE_HTML || "off",
+      // Mini App مضمَّن أصلي (HTML داخل الرسالة نفسها): "off" (افتراضي) أو "on".
+      // ⚠️ ضبطها على "on" لا يفعّل شيئاً اليوم: القناة الوحيدة المعروفة لعرض HTML
+      // داخل رسالة تتطلّب تزوير إثبات تحقق Meta، وهو مرفوض (انظر
+      // TERBOO_NATIVE_MINIAPP_SECURITY_REPORT.md §1). المفتاح موجود ليُفعَّل بلا
+      // تعديل كود إن أتاحت واتساب مساراً مشروعاً، ويبقى السجل يذكر سبب التعطيل.
+      nativeTransport: process.env.TERBOO_NATIVE_MINIAPP || "off",
+    },
   },
   website: {
     enabled: process.env.TERBOO_WEB_ENABLED ? process.env.TERBOO_WEB_ENABLED === "1" : false, // تشغيل خادم الموقع داخل عملية البوت
@@ -363,7 +371,8 @@ const config = {
   // enduser = لوحة المستخدم (منفذ 4083) · admin = لوحة الإدارة (منفذ 4085) للمالك فقط.
   // المفاتيح أسرار: لا تُطبع ولا تُسجَّل ولا تصل للذكاء الاصطناعي ولا للمستخدم.
   // متغيرات البيئة (إن ضُبطت) تتجاوز القيم هنا: VIRTUALIZOR_URL · VIRTUALIZOR_API_KEY · VIRTUALIZOR_API_PASSWORD
-  // · VIRTUALIZOR_ADMIN_URL · VIRTUALIZOR_ADMIN_API_KEY · VIRTUALIZOR_ADMIN_API_PASSWORD · TERBOO_VPS_ENCRYPTION_KEY
+  // · VIRTUALIZOR_ADMIN_URL · VIRTUALIZOR_ADMIN_API_KEY · VIRTUALIZOR_ADMIN_API_PASSWORD
+  // مفتاح التشفير يُقرأ من security.encryptionKey أدناه لا من البيئة.
   // ═══════════════════════════════════════════════
   virtualizor: {
     enabled: true,
@@ -515,7 +524,7 @@ const config = {
   secrets: {
     // ── Cloudflare Workers AI (أمر .تخيل3) ──
     CLOUDFLARE_ACCOUNT_ID: "", // معرّف حساب Cloudflare
-    CLOUDFLARE_AI_TOKEN: "", // توكن Workers AI
+    CLOUDFLARE_AI_TOKEN: "", // توكن Workers AI — ⚠️ كان مكشوفاً في المصدر: دوّره
 
     // ── مزوّدات الذكاء الاصطناعي ──
     ANTHROPIC_API_KEY: "", // Claude
@@ -523,9 +532,9 @@ const config = {
     NVIDIA_API_KEY: "", // NVIDIA NIM
     NVIDIA_API_KEYS: "", // عدة مفاتيح NVIDIA مفصولة بفواصل (تدوير)
     MANUS_API_KEY: "", // Manus
-    GROQ_API_KEY: "", // Groq
-    OPENAI_API_KEY: "", // OpenAI
-    GOOGLE_API_KEY: "", // Google AI
+    GROQ_API_KEY: "", // Groq — المصدر الفعلي للكود هو APIkey.groq أدناه؛ هذه للنشر بالبيئة فقط
+    OPENAI_API_KEY: "", // OpenAI — لا تقرأه أي وحدة حالياً (محجوز للتوسعة)
+    GOOGLE_API_KEY: "", // Google AI — المصدر الفعلي للكود هو APIkey.google أدناه؛ هذه للنشر بالبيئة فقط
 
     // ── خدمات مساعدة ──
     ASSEMBLYAI_KEY: "", // تحويل الصوت إلى نص
@@ -536,7 +545,7 @@ const config = {
 
     // ── البنية التحتية ──
     TERBOO_MASTER_KEY: "", // المفتاح الرئيسي لخزنة الأسرار (أو اتركه لملف data/secure/master.key)
-    TERBOO_VPS_ENCRYPTION_KEY: "", // تشفير بيانات VPS
+    TERBOO_VPS_ENCRYPTION_KEY: "", // تشفير بيانات VPS — المصدر الفعلي للكود هو virtualizor.security.encryptionKey
     VIRTUALIZOR_API_KEY: "", // Virtualizor — مستخدم نهائي
     VIRTUALIZOR_API_PASSWORD: "",
     VIRTUALIZOR_ADMIN_API_KEY: "", // Virtualizor — مدير

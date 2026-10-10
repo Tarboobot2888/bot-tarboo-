@@ -21,6 +21,12 @@ const README = opt("readme", "");
 const LIMIT = Number(opt("max-mb", "27")) * 1024 * 1024;
 // ملفات تُستبعد صراحةً من الحزمة (config.js يحمل مفاتيح حقيقية — تُشحن config.example.js بدلاً منه)
 const EXCLUDE = new Set(String(opt("exclude", "")).split(",").map((x) => x.trim()).filter(Boolean));
+// ملفات تُضاف صراحةً وإن لم تكن متتبَّعة في git (مثل config.js الحيّ عند طلب المالك
+// حزمة جاهزة للتشغيل). كل مسار هنا يُسجَّل في المخرجات حتى لا تُشحن أسرار بالخطأ.
+const INCLUDE = String(opt("include", "")).split(",").map((x) => x.trim()).filter(Boolean);
+for (const f of INCLUDE) {
+  if (!fs.existsSync(f) || !fs.statSync(f).isFile()) throw new Error(`--include: not a file: ${f}`);
+}
 
 /** ملفات عرض الكود: تُشحن دائماً كما هي في المستودع (لا تُستبعد ولا تُعدَّل) */
 const CODE_DISPLAY = [
@@ -31,7 +37,8 @@ const CODE_DISPLAY = [
   "plugins/owner/كشف_الكود.js",
 ];
 
-const files = execFileSync("git", ["ls-files", "-z"]).toString("utf8").split("\0").filter((f) => f && !EXCLUDE.has(f) && fs.existsSync(f) && fs.statSync(f).isFile());
+const tracked = execFileSync("git", ["ls-files", "-z"]).toString("utf8").split("\0").filter((f) => f && !EXCLUDE.has(f) && fs.existsSync(f) && fs.statSync(f).isFile());
+const files = [...new Set([...tracked, ...INCLUDE.filter((f) => !EXCLUDE.has(f))])].sort();
 for (const f of CODE_DISPLAY) if (!files.includes(f)) throw new Error(`missing from git: ${f}`);
 
 // تخطيط الأجزاء بالحجم المضغوط الفعلي لكل ملف (+ ترويسات)
@@ -75,3 +82,5 @@ if (missing.length) throw new Error(`files missing or duplicated: ${missing.slic
 
 for (const part of parts) console.log(`📦 ${path.basename(part)} · ${(fs.statSync(part).size / 1048576).toFixed(2)} MB`);
 console.log(`✅ ${files.length} files · code-display files included unchanged: ${CODE_DISPLAY.length}/5`);
+if (INCLUDE.length) console.log(`⚠️  ملفات غير متتبَّعة شُحنت صراحةً: ${INCLUDE.join(" · ")}`);
+if (EXCLUDE.size) console.log(`🚫 مستبعدة: ${[...EXCLUDE].join(" · ")}`);

@@ -26,7 +26,8 @@ const TOKEN = process.env.CLOUDFLARE_AI_TOKEN || '';
 const API_URL = ACCOUNT_ID
     ? `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell`
     : '';
-const MISSING_KEYS = '⚠️ *الأمر غير مهيّأ*\n\n> اضبط `CLOUDFLARE_ACCOUNT_ID` و`CLOUDFLARE_AI_TOKEN` في البيئة.';
+// بلا backticks: طبقة التصميم تمنعها في النص المعروض (واتساب يعرضها حرفياً)
+const MISSING_KEYS = '⚠️ *الأمر غير مهيّأ*\n\n> ◈ اضبط CLOUDFLARE_ACCOUNT_ID و CLOUDFLARE_AI_TOKEN في البيئة.';
 
 const STYLES = {
     'realistic': {

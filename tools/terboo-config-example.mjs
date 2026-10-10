@@ -2,7 +2,8 @@
 // ═══════════════════════════════════════════════
 // 🧩 config.example.js — قالب إعدادات بلا أسرار من config.js نفسه
 // ───────────────────────────────────────────────
-//   node tools/terboo-config-example.mjs
+//   node tools/terboo-config-example.mjs            ← يولّد ويكتب
+//   node tools/terboo-config-example.mjs --check    ← يتحقق بلا كتابة (للاختبارات)
 // نفس البنية والتعليقات والقيم العامة؛ تُفرَّغ: مفاتيح APIkey · مفاتيح/كلمات مرور Virtualizor ومضيفه وعناوينه
 // · أرقام المالك والجلسة · البريد ورابط واتساب الشخصي · أي token/apikey/capikey/masterKey/encryptionKey.
 // ثم تحقق: لا قيمة سرية حقيقية من config.js المحمّل تظهر في الناتج (وإلا يفشل ولا يكتب).
@@ -14,6 +15,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const ROOT = process.cwd();
+const CHECK = process.argv.includes("--check");
 const source = fs.readFileSync(path.join(ROOT, "config.js"), "utf8");
 const config = (await import(path.join(ROOT, "config.js"))).default;
 
@@ -41,6 +43,8 @@ function blankBlock(text, name) {
 let out = source;
 out = blankBlock(out, "APIkey");
 out = blankBlock(out, "webSessions");
+// كتلة الأسرار الموحّدة: كل قيمة فيها سر بالتعريف، فتُفرَّغ كلها بلا استثناء
+out = blankBlock(out, "secrets");
 for (const key of ["apiKey", "apiPassword", "apikey", "capikey", "token", "masterKey", "encryptionKey", "geminiApiKey"]) out = blankKey(out, key);
 out = blankKey(out, "pairingNumber");
 out = blankKey(out, "gmail");
@@ -60,6 +64,10 @@ const header = [
   "// ═══════════════════════════════════════════════",
   "",
 ].join("\n");
+// الترويسة تُكتب مرة واحدة: إعادة التوليد من config.js يحمل ترويسة مولَّدة سابقاً
+// (نسخة عن القالب) كانت تُضيف ترويسة ثانية فوقها.
+const HEADER_RE = /^\/\/ ═+\n\/\/ 🧩 config\.example\.js[^\n]*\n\/\/ انسخه[^\n]*\n\/\/ ═+\n\n?/;
+while (HEADER_RE.test(out)) out = out.replace(HEADER_RE, "");
 out = header + out;
 
 // ── التحقق: لا سر حقيقي في الناتج ──
@@ -83,6 +91,8 @@ for (const [name, server] of Object.entries(config.pterodactyl || {})) if (serve
 for (const number of config.owner?.number || []) push("owner.number", String(number));
 push("session.pairingNumber", config.session?.pairingNumber);
 push("socialLinks.gmail", config.socialLinks?.gmail);
+// كل قيمة في كتلة الأسرار: بلا هذا كان توكن Cloudflare يمر إلى القالب و«0 تسرّب» تُطبع
+for (const [name, value] of Object.entries(config.secrets || {})) push(`secrets.${name}`, value);
 // أسماء المفاتيح فقط عند التسرّب — القيم لا تُطبع
 const leaked = secrets.filter(([, value]) => out.includes(value)).map(([name]) => name);
 if (leaked.length) {
@@ -91,6 +101,15 @@ if (leaked.length) {
 }
 
 const file = path.join(ROOT, "config.example.js");
+if (CHECK) {
+  const current = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
+  if (current !== out) {
+    console.error("❌ config.example.js لا يطابق المولَّد من config.js — شغّل node tools/terboo-config-example.mjs");
+    process.exit(1);
+  }
+  console.log(`✅ config.example.js مطابق · ${secrets.length} قيمة حساسة فُحصت · 0 تسرّب`);
+  process.exit(0);
+}
 fs.writeFileSync(file, out);
 execFileSync(process.execPath, ["--check", file], { stdio: "ignore" });
 console.log(`✅ config.example.js: ${secrets.length} قيمة حساسة فُحصت · 0 تسرّب · صياغة سليمة`);
