@@ -179,7 +179,38 @@ await withNative("on", async () => {
   assert.doesNotMatch(text, IMAGE, "لا صورة");
   assert.doesNotMatch(text, URLISH, "لا رابط موقع حتى مع موقع مفعّل (§5.2)");
   assert.equal(buttonsOf(sock.out).length, 0, "لا أزرار حركة");
-  assert.match(text, /تلفيق|Meta/, "النص يوضح سبب عدم التوفّر");
+  // النص يجب أن يقول «مطفأ» ويرشد إلى التشغيل — لا أن يُفهم منه أن الميزة مستحيلة
+  assert.match(text, /مطفأة/, "النص لا يقول إن المفتاح مطفأ");
+  assert.match(text, /TERBOO_NATIVE_MINIAPP=on/, "النص لا يرشد إلى كيفية التشغيل");
+  assert.ok(!/تلفيق/.test(text), "نص «مطفأ» يزعم أن الميزة مستحيلة (تلفيق)");
+}
+
+// ─── 5.1) كل سبب نصّه الخاص، بثلاث لغات ──────────────────────────────────
+{
+  const seen = new Map();
+  for (const [lang, offWord, enableHint] of [["ar", /مطفأة/, /TERBOO_NATIVE_MINIAPP=on/], ["en", /switched off/i, /TERBOO_NATIVE_MINIAPP=on/], ["es", /apagada/i, /TERBOO_NATIVE_MINIAPP=on/]]) {
+    const sock = mockSock(); const m = mkMsg(sock, A);
+    await M.deliverMiniApp(sock, m, "snake", { lang });
+    const text = String(sock.out[0]?.content?.text || "");
+    assert.match(text, offWord, `${lang}: نص «مطفأ» بلغته`);
+    assert.match(text, enableHint, `${lang}: إرشاد التشغيل`);
+    assert.match(text, /native-transport-off/, `${lang}: رمز السبب مرفق للتشخيص`);
+    seen.set(lang, text);
+  }
+  assert.equal(new Set(seen.values()).size, 3, "النصوص الثلاثة ليست متمايزة");
+
+  // سبب مختلف ⇒ نص مختلف: مقبس بلا relayMessage مع تفعيل المفتاح
+  await withNative("on", async () => {
+    const sent = [];
+    const halfSock = { user: { id: "x@s.whatsapp.net" }, async sendMessage(j, c) { sent.push(c); return { key: { id: "M" } }; } };
+    const m = { chat: A, sender: A, isGroup: false, prefix: ".", key: { id: "K" }, reply: async (t) => halfSock.sendMessage(A, { text: t }) };
+    const res = await M.deliverMiniApp(halfSock, m, "snake", { lang: "ar" });
+    assert.equal(res.code, "socket-has-no-relay");
+    const text = String(sent[0]?.text || "");
+    assert.match(text, /الاتصال غير جاهز/, "سبب المقبس له نصه الخاص");
+    assert.ok(!/مطفأة/.test(text), "نص المقبس يقول «مطفأ» خطأً");
+    assert.ok(!/تلفيق/.test(text), "نص المقبس يزعم استحالة");
+  });
 }
 
 // ─── 6) فشل الإرسال ⇒ نص سبب، بلا بديل صامت ──────────────────────────────

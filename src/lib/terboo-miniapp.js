@@ -172,8 +172,25 @@ async function deliverMiniApp(sock, m, id, { lang = "ar" } = {}) {
     return deliverLegacyWebLink(sock, m, app, l);
   }
 
-  await m.reply(`${TEXT[l].noTransport}\n> ${capability.reason}`);
+  await m.reply(`${unavailableText(l, capability.reason)}\n> ${capability.reason}`);
   return { ok: false, channel: "none", code: capability.reason };
+}
+
+/**
+ * نص سبب عدم التوفّر **حسب السبب الفعلي**.
+ *
+ * كان نصّ واحد يُطبع لكل الأسباب، فمن لم يُشغّل المفتاح يُقرأ له أن الميزة
+ * مستحيلة — وهو خطأ: «مطفأ» سببه قرار المالك، و«يتطلّب تلفيقاً» وصفٌ لحالة
+ * أخرى تماماً. السبب المجهول يأخذ النص العام لا نصاً مخترعاً.
+ * @param {string} lang
+ * @param {string} reason رمز السبب من nativeCapability
+ */
+function unavailableText(lang, reason) {
+  const t = TEXT[langOf(lang)];
+  if (reason === "native-transport-off") return t.transportOff;
+  if (reason === "socket-has-no-relay") return t.socketNotReady;
+  if (String(reason).startsWith("proto-")) return t.protoMissing;
+  return t.noTransport;
 }
 
 /**
@@ -209,16 +226,25 @@ const TEXT = {
   ar: { play: "🎮 افتح اللعبة", open: "اضغط الزر لفتح اللعبة التفاعلية — اللعب باللمس داخل الصفحة.",
         footer: "TERBOO ARCADE", noSite: "⚠️ اللعبة تحتاج موقع البوت مفعّلاً.\n> المالك: فعّله بـ«.موقع تشغيل» واضبط الرابط العام.",
         noTransport: "⚠️ *تجربة اللعبة داخل الرسالة غير متاحة.*\nلا توجد قناة نقل مشروعة لعرض HTML في فقاعة واتساب: القناة الوحيدة المعروفة تتطلّب تلفيق إثبات تحقق Meta، وهو مرفوض.",
+        transportOff: "🎮 *تجربة اللعبة داخل الرسالة مطفأة.*\nهذا هو الوضع الافتراضي: عرض HTML في فقاعة واتساب لم يُختبر على جهاز حقيقي بعد، فلا يُفعَّل تلقائياً.\n> المالك: شغّل البوت بـ«TERBOO_NATIVE_MINIAPP=on» ثم أعِد الأمر لتجربة العرض على جهازك. التفصيل في TERBOO_GAME_MINIAPP_SETUP.md §4.",
+        socketNotReady: "⚠️ *الاتصال غير جاهز الآن.*\nتعذّر إرسال اللعبة لأن اتصال واتساب لم يكتمل. أعِد المحاولة بعد لحظات.",
+        protoMissing: "⚠️ *الحزمة المثبّتة لا تحمل شكل رسالة اللعبة.*\n> المالك: شغّل «npm ci» للعودة إلى @whiskeysockets/baileys المثبّت في package-lock.json.",
         relayFailed: "⚠️ *تعذّر إرسال اللعبة كتجربة HTML داخل الرسالة.*\nلم تُرسل بطاقة ولا رابط بديلاً — السبب مسجَّل:",
         buildFailed: "⚠️ *تعذّر بناء مستند اللعبة.* لم تُرسل بطاقة ولا رابط بديلاً، والسبب مسجَّل في سجل الإخفاقات." },
   en: { play: "🎮 Open the game", open: "Tap to open the interactive game — play by touch inside the page.",
         footer: "TERBOO ARCADE", noSite: "⚠️ This game needs the bot website enabled.\n> Owner: enable it and set the public URL.",
         noTransport: "⚠️ *In-message game experience is unavailable.*\nThere is no legitimate channel for rendering HTML inside a WhatsApp bubble: the only known one requires forging Meta verification proof, which is refused.",
+        transportOff: "🎮 *The in-message game experience is switched off.*\nThat is the default: rendering HTML inside a WhatsApp bubble has not been verified on a real device, so it is not enabled on its own.\n> Owner: start the bot with \"TERBOO_NATIVE_MINIAPP=on\" and run the command again to test it on your phone. See TERBOO_GAME_MINIAPP_SETUP.md §4.",
+        socketNotReady: "⚠️ *The connection is not ready yet.*\nThe game could not be sent because the WhatsApp connection is still coming up. Try again in a moment.",
+        protoMissing: "⚠️ *The installed package does not carry the game message shape.*\n> Owner: run \"npm ci\" to restore @whiskeysockets/baileys as pinned in package-lock.json.",
         relayFailed: "⚠️ *Could not send the game as an in-message HTML experience.*\nNo card and no link were sent instead — the reason is logged:",
         buildFailed: "⚠️ *Could not build the game document.* No card and no link were sent instead; the reason is in the failure log." },
   es: { play: "🎮 Abrir el juego", open: "Pulsa para abrir el juego interactivo — se juega tocando la pagina.",
         footer: "TERBOO ARCADE", noSite: "⚠️ Este juego necesita el sitio del bot activo.\n> Dueño: actívalo y define la URL publica.",
         noTransport: "⚠️ *La experiencia del juego dentro del mensaje no esta disponible.*\nNo hay canal legitimo para mostrar HTML en una burbuja de WhatsApp: el unico conocido exige falsificar la prueba de verificacion de Meta, y se rechaza.",
+        transportOff: "🎮 *La experiencia del juego dentro del mensaje esta apagada.*\nEs el valor por defecto: mostrar HTML en una burbuja de WhatsApp no se ha verificado en un dispositivo real, asi que no se activa solo.\n> Dueño: inicia el bot con \"TERBOO_NATIVE_MINIAPP=on\" y repite el comando para probarlo en tu telefono. Ver TERBOO_GAME_MINIAPP_SETUP.md §4.",
+        socketNotReady: "⚠️ *La conexion aun no esta lista.*\nNo se pudo enviar el juego porque la conexion de WhatsApp todavia se esta estableciendo. Intenta de nuevo en un momento.",
+        protoMissing: "⚠️ *El paquete instalado no lleva la forma del mensaje del juego.*\n> Dueño: ejecuta \"npm ci\" para restaurar @whiskeysockets/baileys segun package-lock.json.",
         relayFailed: "⚠️ *No se pudo enviar el juego como experiencia HTML dentro del mensaje.*\nNo se envio ninguna tarjeta ni enlace en su lugar — el motivo queda registrado:",
         buildFailed: "⚠️ *No se pudo construir el documento del juego.* No se envio tarjeta ni enlace; el motivo esta en el registro de fallos." },
 };
